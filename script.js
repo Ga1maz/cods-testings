@@ -31,7 +31,7 @@ infoPanel.update = function (coords1 = '', coords2 = '', distance = '') {
 infoPanel.addTo(map);
 
 // Подключение к MQTT через WebSocket
-const client = mqtt.connect('wss://mqtt.cloa.su:8883', {
+const client = mqtt.connect('wss://mqtt.cloa.su:8080', {
     username: 'ga1maz',
     password: 'almazg1234'
 });
@@ -45,7 +45,7 @@ client.on('connect', () => {
             console.error('Ошибка подписки:', err);
         }
     });
-
+    
     client.subscribe('gps/cord2', (err) => {
         if (!err) {
             console.log('Подписались на тему: gps/cord2');
