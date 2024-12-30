@@ -79,7 +79,7 @@ client.on('message', (topic, message) => {
             // Автозум, чтобы показать обе точки на карте
             map.flyToBounds([marker1.getLatLng(), marker2.getLatLng()], {
                 padding: [50, 50],
-                animate: true
+                animate: false
             });
         } else {
             console.error('Некорректные координаты для первой точки:', coordinates);
