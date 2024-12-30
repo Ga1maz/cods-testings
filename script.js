@@ -1,6 +1,6 @@
-// Инициализация карты
+// Инициализация карты с включенным контроллером масштабирования
 const map = L.map('map', {
-    zoomControl: true // Включаем встроенный контроллер масштабирования
+    zoomControl: true // Включаем контроллер масштабирования
 }).setView([55.751244, 37.618423], 10); // Москва
 
 // Добавление слоя карты
@@ -8,17 +8,19 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
 }).addTo(map);
 
-// Добавляем кастомный контроллер для изменения масштаба (опционально)
+// Перемещаем контроллер масштабирования в правый нижний угол
 L.control.zoom({
-    position: 'bottomright' // Переносим контроллер в правый нижний угол
+    position: 'bottomright'
 }).addTo(map);
 
-// Остальная часть вашего кода
+// Инициализация маркеров
 let marker1 = L.marker([55.751244, 37.618423]).addTo(map); // Первое местоположение
 let marker2 = L.marker([55.760244, 37.628423]).addTo(map); // Второе местоположение (пример)
 
+// Линия между маркерами
 let polyline = L.polyline([marker1.getLatLng(), marker2.getLatLng()], { color: 'blue' }).addTo(map);
 
+// Создание элемента для отображения расстояния
 let infoPanel = L.control({ position: 'topright' });
 infoPanel.onAdd = function () {
     this._div = L.DomUtil.create('div', 'info'); // Создание контейнера
@@ -41,7 +43,6 @@ const client = mqtt.connect('wss://mqtt.cloa.su:8080', {
     password: 'almazg1234'
 });
 
-
 client.on('connect', () => {
     console.log('Подключено к MQTT');
     client.subscribe('gps/coordinates', (err) => {
@@ -51,7 +52,7 @@ client.on('connect', () => {
             console.error('Ошибка подписки:', err);
         }
     });
-    
+
     client.subscribe('gps/cord2', (err) => {
         if (!err) {
             console.log('Подписались на тему: gps/cord2');
@@ -70,15 +71,15 @@ client.on('message', (topic, message) => {
 
         if (!isNaN(lat1) && !isNaN(lon1)) {
             marker1.setLatLng([lat1, lon1]);
-            marker1.bindPopup(`<b>Точка 1:</b><br>${lat1.toFixed(6)}, ${lon1.toFixed(6)}`).openPopup(); // Добавляем всплывающее окно
-            polyline.setLatLngs([marker1.getLatLng(), marker2.getLatLng()]); // Обновляем линию
+            marker1.bindPopup(`<b>Точка 1:</b><br>${lat1.toFixed(6)}, ${lon1.toFixed(6)}`).openPopup();
+            polyline.setLatLngs([marker1.getLatLng(), marker2.getLatLng()]);
 
-            updateDistance(); // Обновляем расстояние
+            updateDistance();
 
-            // Плавно показываем обе точки на карте
+            // Автозум, чтобы показать обе точки на карте
             map.flyToBounds([marker1.getLatLng(), marker2.getLatLng()], {
-                padding: [50, 50], // Немного отступов, чтобы сделать отображение комфортным
-                animate: true // Включаем анимацию
+                padding: [50, 50],
+                animate: true
             });
         } else {
             console.error('Некорректные координаты для первой точки:', coordinates);
@@ -93,15 +94,15 @@ client.on('message', (topic, message) => {
 
         if (!isNaN(lat2) && !isNaN(lon2)) {
             marker2.setLatLng([lat2, lon2]);
-            marker2.bindPopup(`<b>Точка 2:</b><br>${lat2.toFixed(6)}, ${lon2.toFixed(6)}`).openPopup(); // Добавляем всплывающее окно
-            polyline.setLatLngs([marker1.getLatLng(), marker2.getLatLng()]); // Обновляем линию
+            marker2.bindPopup(`<b>Точка 2:</b><br>${lat2.toFixed(6)}, ${lon2.toFixed(6)}`).openPopup();
+            polyline.setLatLngs([marker1.getLatLng(), marker2.getLatLng()]);
 
-            updateDistance(); // Обновляем расстояние
+            updateDistance();
 
-            // Плавно показываем обе точки на карте
+            // Автозум, чтобы показать обе точки на карте
             map.flyToBounds([marker1.getLatLng(), marker2.getLatLng()], {
-                padding: [50, 50], // Немного отступов, чтобы сделать отображение комфортным
-                animate: true // Включаем анимацию
+                padding: [50, 50],
+                animate: true
             });
         } else {
             console.error('Некорректные координаты для второй точки:', coordinates);
