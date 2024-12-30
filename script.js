@@ -1,5 +1,7 @@
 // Инициализация карты
-const map = L.map('map').setView([55.751244, 37.618423], 10); // Москва
+const map = L.map('map', {
+    zoomControl: true // Включаем встроенный контроллер масштабирования
+}).setView([55.751244, 37.618423], 10); // Москва
 
 // Добавление слоя карты
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
