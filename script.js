@@ -31,10 +31,11 @@ infoPanel.update = function (coords1 = '', coords2 = '', distance = '') {
 infoPanel.addTo(map);
 
 // Подключение к MQTT через защищенное соединение WebSocket
-const client = mqtt.connect('wss://mqtt.cloa.su:8883', {
+const client = mqtt.connect('mqtts://mqtt.cloa.su:8883', {
     username: 'ga1maz',
     password: 'almazg1234'
 });
+
 
 client.on('connect', () => {
     console.log('Подключено к MQTT');
