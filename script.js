@@ -30,8 +30,8 @@ infoPanel.update = function (coords1 = '', coords2 = '', distance = '') {
 };
 infoPanel.addTo(map);
 
-// Подключение к MQTT через незащищенное соединение
-const client = mqtt.connect('mqtt://mqtt.cloa.su:1883', {
+// Подключение к MQTT через защищенное соединение WebSocket
+const client = mqtt.connect('wss://mqtt.cloa.su:8883', {
     username: 'ga1maz',
     password: 'almazg1234'
 });
