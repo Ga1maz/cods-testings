@@ -8,14 +8,17 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
 }).addTo(map);
 
-// Инициализация маркеров
+// Добавляем кастомный контроллер для изменения масштаба (опционально)
+L.control.zoom({
+    position: 'bottomright' // Переносим контроллер в правый нижний угол
+}).addTo(map);
+
+// Остальная часть вашего кода
 let marker1 = L.marker([55.751244, 37.618423]).addTo(map); // Первое местоположение
 let marker2 = L.marker([55.760244, 37.628423]).addTo(map); // Второе местоположение (пример)
 
-// Линия между маркерами
 let polyline = L.polyline([marker1.getLatLng(), marker2.getLatLng()], { color: 'blue' }).addTo(map);
 
-// Создание элемента для отображения расстояния
 let infoPanel = L.control({ position: 'topright' });
 infoPanel.onAdd = function () {
     this._div = L.DomUtil.create('div', 'info'); // Создание контейнера
