@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Данные INA219</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    .data-box {
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      display: inline-block;
+      width: 200px;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Данные с INA219</h1>
+  <div id="voltage" class="data-box">Напряжение (V): --</div>
+  <div id="current" class="data-box">Ток (mA): --</div>
+  <div id="loadvoltage" class="data-box">Нагрузка (V): --</div>
+  <div id="power" class="data-box">Мощность (mW): --</div>
+
+  <script>
+    // Подключение к MQTT серверу
+    const mqttServer = "wss://mqtt.cloa.su:8080"; // Используем WebSocket
+    const mqttUser = "ga1maz";
+    const mqttPassword = "almazg1234";
+
+    const client = mqtt.connect(mqttServer, {
+      username: mqttUser,
+      password: mqttPassword,
+    });
+
+    client.on("connect", () => {
+      console.log("Подключено к MQTT серверу");
+      // Подписка на темы
+      client.subscribe("ina219/volt");
+      client.subscribe("ina219/current");
+      client.subscribe("ina219/loadvoltage");
+      client.subscribe("ina219/power");
+    });
+
+    client.on("message", (topic, message) => {
+      const data = message.toString();
+      switch (topic) {
+        case "ina219/volt":
+          document.getElementById("voltage").innerText = `Напряжение (V): ${data}`;
+          break;
+        case "ina219/current":
+          document.getElementById("current").innerText = `Ток (mA): ${data}`;
+          break;
+        case "ina219/loadvoltage":
+          document.getElementById("loadvoltage").innerText = `Нагрузка (V): ${data}`;
+          break;
+        case "ina219/power":
+          document.getElementById("power").innerText = `Мощность (mW): ${data}`;
+          break;
+      }
+    });
+
+    client.on("error", (err) => {
+      console.error("Ошибка подключения:", err);
+    });
+  </script>
+</body>
+</html>
