@@ -1,98 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>INA219 Data Monitor</title>
+  <title>Данные INA219</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       text-align: center;
-      width: 300px;
+      margin: 20px;
     }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    .data {
-      font-size: 18px;
+    .data-box {
       margin: 10px 0;
-    }
-    .data span {
-      font-weight: bold;
-      color: #007BFF;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      display: inline-block;
+      width: 200px;
+      background-color: #f9f9f9;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>INA219 Monitor</h1>
-    <div class="data">Voltage: <span id="voltage">-</span> V</div>
-    <div class="data">Current: <span id="current">-</span> mA</div>
-    <div class="data">Load Voltage: <span id="loadVoltage">-</span> V</div>
-    <div class="data">Power: <span id="power">-</span> mW</div>
-  </div>
+  <h1>Данные с INA219</h1>
+  <div id="voltage" class="data-box">Напряжение (V): --</div>
+  <div id="current" class="data-box">Ток (mA): --</div>
+  <div id="loadvoltage" class="data-box">Нагрузка (V): --</div>
+  <div id="power" class="data-box">Мощность (mW): --</div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.min.js"></script>
   <script>
-    const mqttServer = 'mqtt.cloa.su'; // Адрес MQTT сервера
-    const mqttPort = 8080; // SSL порт WebSocket MQTT
-    const mqttUser = 'ga1maz';
-    const mqttPassword = 'almazg1234';
+    // Подключение к MQTT серверу
+    const mqttServer = "wss://mqtt.cloa.su:8083/mqtt"; // Используем WebSocket
+    const mqttUser = "ga1maz";
+    const mqttPassword = "almazg1234";
 
-    // Подключение к MQTT с использованием WebSocket Secure (wss)
-    const client = new Paho.MQTT.Client(`wss://${mqttServer}:${mqttPort}/mqtt`, `webClient_${Math.random()}`);
+    const client = mqtt.connect(mqttServer, {
+      username: mqttUser,
+      password: mqttPassword,
+    });
 
-    client.onMessageArrived = function (message) {
-      const topic = message.destinationName;
-      const payload = parseFloat(message.payloadString).toFixed(2);
+    client.on("connect", () => {
+      console.log("Подключено к MQTT серверу");
+      // Подписка на темы
+      client.subscribe("ina219/volt");
+      client.subscribe("ina219/current");
+      client.subscribe("ina219/loadvoltage");
+      client.subscribe("ina219/power");
+    });
 
-      if (topic === "ina219/volt") {
-        document.getElementById('voltage').innerText = payload;
-      } else if (topic === "ina219/current") {
-        document.getElementById('current').innerText = payload;
-      } else if (topic === "ina219/loadvoltage") {
-        document.getElementById('loadVoltage').innerText = payload;
-      } else if (topic === "ina219/power") {
-        document.getElementById('power').innerText = payload;
+    client.on("message", (topic, message) => {
+      const data = message.toString();
+      switch (topic) {
+        case "ina219/volt":
+          document.getElementById("voltage").innerText = `Напряжение (V): ${data}`;
+          break;
+        case "ina219/current":
+          document.getElementById("current").innerText = `Ток (mA): ${data}`;
+          break;
+        case "ina219/loadvoltage":
+          document.getElementById("loadvoltage").innerText = `Нагрузка (V): ${data}`;
+          break;
+        case "ina219/power":
+          document.getElementById("power").innerText = `Мощность (mW): ${data}`;
+          break;
       }
-    };
+    });
 
-    client.onConnectionLost = function (responseObject) {
-      console.error("Соединение потеряно: " + responseObject.errorMessage);
-    };
-
-    function connectMQTT() {
-      client.connect({
-        onSuccess: () => {
-          console.log("Подключено к MQTT!");
-          client.subscribe("ina219/volt");
-          client.subscribe("ina219/current");
-          client.subscribe("ina219/loadvoltage");
-          client.subscribe("ina219/power");
-        },
-        userName: mqttUser,
-        password: mqttPassword,
-        useSSL: true, // Обязательно включите SSL
-        onFailure: (e) => console.error("Ошибка подключения: ", e)
-      });
-    }
-
-    connectMQTT();
+    client.on("error", (err) => {
+      console.error("Ошибка подключения:", err);
+    });
   </script>
 </body>
 </html>
