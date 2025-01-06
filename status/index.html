@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INA219 Data Monitor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 300px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .data {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .data span {
+      font-weight: bold;
+      color: #007BFF;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>INA219 Monitor</h1>
+    <div class="data">Voltage: <span id="voltage">-</span> V</div>
+    <div class="data">Current: <span id="current">-</span> mA</div>
+    <div class="data">Load Voltage: <span id="loadVoltage">-</span> V</div>
+    <div class="data">Power: <span id="power">-</span> mW</div>
+  </div>
+
+  <script>
+    const mqttServer = 'mqtt.cloa.su'; // Адрес MQTT сервера
+    const mqttPort = 9001; // WebSocket порт MQTT
+    const mqttUser = 'ga1maz';
+    const mqttPassword = 'almazg1234';
+
+    // Подключение к MQTT
+    const client = new Paho.MQTT.Client(mqttServer, mqttPort, "webClient" + Math.random());
+
+    client.onMessageArrived = function (message) {
+      const topic = message.destinationName;
+      const payload = parseFloat(message.payloadString).toFixed(2);
+
+      if (topic === "ina219/volt") {
+        document.getElementById('voltage').innerText = payload;
+      } else if (topic === "ina219/current") {
+        document.getElementById('current').innerText = payload;
+      } else if (topic === "ina219/loadvoltage") {
+        document.getElementById('loadVoltage').innerText = payload;
+      } else if (topic === "ina219/power") {
+        document.getElementById('power').innerText = payload;
+      }
+    };
+
+    client.onConnectionLost = function (responseObject) {
+      console.error("Соединение потеряно: " + responseObject.errorMessage);
+    };
+
+    function connectMQTT() {
+      client.connect({
+        onSuccess: () => {
+          console.log("Подключено к MQTT!");
+          client.subscribe("ina219/volt");
+          client.subscribe("ina219/current");
+          client.subscribe("ina219/loadvoltage");
+          client.subscribe("ina219/power");
+        },
+        userName: mqttUser,
+        password: mqttPassword,
+        useSSL: false,
+        onFailure: (e) => console.error("Ошибка подключения: ", e)
+      });
+    }
+
+    connectMQTT();
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.min.js"></script>
+</body>
+</html>
