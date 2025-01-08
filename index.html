@@ -93,35 +93,7 @@
       display: none;
     }
 
-    /* Медиазапросы для мобильных устройств */
-    @media (max-width: 768px) {
-      body {
-        background-attachment: scroll; /* Фон будет прокручиваться */
-      }
-
-      .container {
-        flex-direction: column;
-      }
-
-      .map-box {
-        display: block; /* Показываем карту на мобильных устройствах */
-        order: 1; /* Карта будет сверху */
-      }
-
-      #map {
-        height: 250px; /* Уменьшаем высоту карты на мобильных */
-      }
-
-      .acrylic-box {
-        order: 2; /* Данные будут ниже карты */
-        width: 100%;
-      }
-
-      /* Для фиксированного фона при прокрутке */
-      body {
-        background-attachment: fixed;
-      }
-    }
+    
   </style>
 </head>
 <body>
