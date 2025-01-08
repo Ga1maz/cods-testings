@@ -18,8 +18,7 @@
       height: 100vh;
       background: url('bak.jpg') no-repeat center center fixed;
       background-size: cover;
-      overflow-y: auto; /* Allow vertical scrolling */
-      overflow-x: hidden; /* Prevent horizontal scrolling */
+      overflow: hidden; /* Prevent scrolling */
     }
 
     .container {
@@ -42,7 +41,6 @@
       border-radius: 15px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       text-align: center;
-      overflow: hidden; /* Prevent content overflow */
     }
 
     .data-box {
@@ -78,7 +76,7 @@
 
     #map1, #map2 {
       width: 100%;
-      height: 250px; /* Adjust height to fit screen */
+      height: 300px; /* Adjust height to fit screen */
       border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     }
@@ -97,13 +95,12 @@
       .container {
         flex-direction: column;
         height: 100vh;
-        width: 100%; /* Full width for mobile */
         overflow-y: auto;
         gap: 10px;
         padding: 10px;
       }
       
-      .map-box #map1, .map-box #map2 {
+      .map-box {
         display: none;
       }
 
@@ -113,6 +110,10 @@
 
       .data-box, .battery-box {
         font-size: 16px;
+      }
+
+      #map2 {
+        height: 200px; /* Adjust height to fit screen on mobile */
       }
     }
   </style>
@@ -131,10 +132,8 @@
     </div>
 
     <div class="acrylic-box">
-      <h2>Данные GPS</h2>
-      <div id="point1" class="data-box">Точка 1: --</div>
-      <div id="point2" class="data-box">Точка 2: --</div>
-      <div id="distance-between" class="data-box">Расстояние между точками: --</div>
+      <h2>Карта Поезда</h2>
+      <div id="map2"></div>
       <h2>Данные с LiDAR</h2>
       <div id="distance" class="data-box">Дистанция: -- мм</div>
       <div id="strength" class="data-box">Сила сигнала: --</div>
