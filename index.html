@@ -16,8 +16,9 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: url('bak.jpg') no-repeat center center fixed;
+      background: url('bak.jpg') no-repeat center center;
       background-size: cover;
+      background-attachment: scroll; /* Изменили background-attachment */
       overflow: hidden;
     }
 
@@ -98,7 +99,8 @@
       }
 
       .map-box {
-        display: none; /* Убираем карту на мобильных устройствах */
+        order: 1; /* Ставим карту сверху */
+        width: 100%;
       }
 
       h2 {
@@ -106,28 +108,29 @@
       }
 
       #map {
-        display: none; /* Убираем карту на мобильных устройствах */
+        display: block; /* Показываем карту */
+        height: 300px;
       }
 
       #coordinates-info {
-        display: none; /* Убираем информацию о координатах на мобильных устройствах */
+        display: block;
       }
 
       .acrylic-box {
-        order: 1;
+        order: 2;
         width: 100%;
       }
 
       /* Для фиксированного фона при прокрутке */
       body {
-        background-attachment: fixed;
+        background-attachment: scroll; /* Убираем фиксированный фон */
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Блок с картой, который будет скрыт на мобильных устройствах -->
+    <!-- Блок с картой -->
     <div class="map-box">
       <h2>Карта Поезда</h2>
       <div id="map"></div>
