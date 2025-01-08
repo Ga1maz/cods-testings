@@ -93,7 +93,32 @@
       display: none;
     }
 
-    
+    /* Медиазапросы для мобильных устройств */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 10px;
+      }
+
+      .acrylic-box, .map-box {
+        flex: none;
+        width: 100%;
+      }
+
+      .data-box {
+        font-size: 16px;
+        padding: 10px;
+      }
+
+      #map {
+        height: 300px;
+      }
+
+      /* Увеличиваем видимость блока с данными */
+      .acrylic-box {
+        margin-bottom: 20px;
+      }
+    }
   </style>
 </head>
 <body>
