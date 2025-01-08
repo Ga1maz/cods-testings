@@ -18,7 +18,8 @@
       height: 100vh;
       background: url('bak.jpg') no-repeat center center fixed;
       background-size: cover;
-      overflow: hidden; /* Prevent scrolling */
+      overflow-y: auto; /* Allow vertical scrolling */
+      overflow-x: hidden; /* Prevent horizontal scrolling */
     }
 
     .container {
@@ -102,7 +103,7 @@
         padding: 10px;
       }
       
-      .map-box {
+      .map-box #map1, .map-box #map2 {
         display: none;
       }
 
