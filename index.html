@@ -16,10 +16,10 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: url('bak.jpg') no-repeat center center;
+      background: url('bak.jpg') no-repeat center center fixed;
       background-size: cover;
-      background-attachment: scroll; /* Изменили background-attachment */
-      overflow: hidden;
+      overflow-y: auto; /* Разрешаем вертикальный скролинг */
+      background-attachment: fixed; /* Фон не будет прокручиваться */
     }
 
     .container {
@@ -32,6 +32,7 @@
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      flex-wrap: wrap; /* Позволяет элементам переходить на новую строку */
     }
 
     .acrylic-box, .map-box {
@@ -94,36 +95,31 @@
 
     /* Медиазапросы для мобильных устройств */
     @media (max-width: 768px) {
+      body {
+        background-attachment: scroll; /* Фон будет прокручиваться */
+      }
+
       .container {
         flex-direction: column;
       }
 
       .map-box {
-        order: 1; /* Ставим карту сверху */
-        width: 100%;
-      }
-
-      h2 {
-        font-size: 18px;
+        display: block; /* Показываем карту на мобильных устройствах */
+        order: 1; /* Карта будет сверху */
       }
 
       #map {
-        display: block; /* Показываем карту */
-        height: 300px;
-      }
-
-      #coordinates-info {
-        display: block;
+        height: 250px; /* Уменьшаем высоту карты на мобильных */
       }
 
       .acrylic-box {
-        order: 2;
+        order: 2; /* Данные будут ниже карты */
         width: 100%;
       }
 
       /* Для фиксированного фона при прокрутке */
       body {
-        background-attachment: scroll; /* Убираем фиксированный фон */
+        background-attachment: fixed;
       }
     }
   </style>
