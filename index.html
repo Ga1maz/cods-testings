@@ -22,6 +22,7 @@
 
     .container {
       display: flex;
+      flex-direction: row;
       gap: 20px;
       width: 95%;
       max-width: 1200px;
@@ -88,10 +89,38 @@
     .leaflet-control-attribution {
       display: none;
     }
+
+    /* Медиазапросы для мобильных устройств */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .map-box {
+        order: 1; /* Сначала показываем карту */
+      }
+
+      .acrylic-box {
+        order: 2; /* Затем показываем статусные данные */
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Блок с картой, который будет первым на мобильных устройствах -->
+    <div class="map-box">
+      <h2>Карта Поезда</h2>
+      <div id="map"></div>
+      <div id="coordinates-info">
+        <h2>Данные GPS</h2>
+        <div id="point1" class="data-box">Точка 1: --</div>
+        <div id="point2" class="data-box">Точка 2: --</div>
+        <div id="distance-between" class="data-box">Расстояние между точками: --</div>
+      </div>
+    </div>
+
+    <!-- Блок с данными -->
     <div class="acrylic-box">
       <h2>Данные с LiDAR</h2>
       <div id="distance" class="data-box">Дистанция: -- мм</div>
@@ -106,17 +135,6 @@
       <div id="power" class="data-box">Мощность (mW): --</div>
       <h2>Состояние аккумулятора</h2>
       <div id="battery" class="battery-box">Заряд: --%</div>
-    </div>
-
-    <div class="map-box">
-      <h2>Карта Поезда</h2>
-      <div id="map"></div>
-      <div id="coordinates-info">
-        <h2>Данные GPS</h2>
-        <div id="point1" class="data-box">Точка 1: --</div>
-        <div id="point2" class="data-box">Точка 2: --</div>
-        <div id="distance-between" class="data-box">Расстояние между точками: --</div>
-      </div>
     </div>
   </div>
 
