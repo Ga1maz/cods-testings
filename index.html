@@ -96,6 +96,7 @@
       .container {
         flex-direction: column;
         height: 100vh;
+        width: 100%; /* Full width for mobile */
         overflow-y: auto;
         gap: 10px;
         padding: 10px;
@@ -111,10 +112,6 @@
 
       .data-box, .battery-box {
         font-size: 16px;
-      }
-
-      #map2 {
-        height: 200px; /* Adjust height to fit screen on mobile */
       }
     }
   </style>
@@ -133,8 +130,10 @@
     </div>
 
     <div class="acrylic-box">
-      <h2>Карта Поезда</h2>
-      <div id="map2"></div>
+      <h2>Данные GPS</h2>
+      <div id="point1" class="data-box">Точка 1: --</div>
+      <div id="point2" class="data-box">Точка 2: --</div>
+      <div id="distance-between" class="data-box">Расстояние между точками: --</div>
       <h2>Данные с LiDAR</h2>
       <div id="distance" class="data-box">Дистанция: -- мм</div>
       <div id="strength" class="data-box">Сила сигнала: --</div>
