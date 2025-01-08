@@ -16,10 +16,11 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: url('bak.jpg') no-repeat center center fixed;
+      background-image: url('bak.jpg');
       background-size: cover;
-      overflow-y: auto; /* Разрешаем вертикальный скролинг */
-      background-attachment: fixed; /* Фон не будет прокручиваться */
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow-y: auto;
     }
 
     .container {
@@ -32,7 +33,7 @@
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      flex-wrap: wrap; /* Позволяет элементам переходить на новую строку */
+      flex-wrap: wrap;
     }
 
     .acrylic-box, .map-box {
@@ -95,35 +96,39 @@
 
     /* Медиазапросы для мобильных устройств */
     @media (max-width: 768px) {
+      body {
+        background-attachment: scroll; /* Избегаем проблемы с фоном на мобильных */
+      }
+
       .container {
         flex-direction: column;
-        padding: 10px;
+        align-items: center;
       }
 
       .acrylic-box, .map-box {
-        flex: none;
         width: 100%;
       }
 
-      .data-box {
-        font-size: 16px;
-        padding: 10px;
-      }
-
       #map {
-        height: 300px;
+        height: 300px; /* Уменьшаем размер карты на мобильных */
       }
 
-      /* Увеличиваем видимость блока с данными */
-      .acrylic-box {
-        margin-bottom: 1px;
+      h2 {
+        font-size: 16px; /* Уменьшаем шрифт на мобильных */
+      }
+
+      .data-box {
+        font-size: 14px; /* Меньший размер текста на мобильных */
+      }
+
+      .battery-box {
+        font-size: 16px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    
     <!-- Блок с данными -->
     <div class="acrylic-box">
       <h2>Данные с LiDAR</h2>
