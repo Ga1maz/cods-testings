@@ -1,20 +1,248 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map POEZD</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Статусы и Карта</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: url('bak.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      width: 95%;
+      max-width: 1200px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .acrylic-box, .map-box {
+      flex: 1;
+      background: rgba(255, 255, 255, 0);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .data-box {
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: rgba(255, 255, 255, 0.021);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-size: 18px;
+    }
+
+    .battery-box {
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 10px;
+      color: rgba(0, 0, 0, 0.788);
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .battery-low {
+      background-color: red;
+    }
+
+    .battery-medium {
+      background-color: orange;
+    }
+
+    .battery-high {
+      background-color: green;
+    }
+
+    #map {
+      width: 100%;
+      height: 500px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      color: #ffffff;
+    }
+
+    .leaflet-control-attribution {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Поезд</h1>
-        <div id="map"></div>
-        <h1 >Developed by <a href="https://t.me/al_maz_g" target="_blank">Ga1maz</a> | <a href="https://github.com/Ga1maz" target="_blank">GitHub</a></h1>
+  <div class="container">
+    <div class="acrylic-box">
+      <h2>Данные с LiDAR</h2>
+      <div id="distance" class="data-box">Дистанция: -- мм</div>
+      <div id="strength" class="data-box">Сила сигнала: --</div>
+      <h2>Данные с DHT22</h2>
+      <div id="temperature" class="data-box">Температура (°C): --</div>
+      <div id="humidity" class="data-box">Влажность (%): --</div>
+      <h2>Данные с INA219</h2>
+      <div id="voltage" class="data-box">Напряжение (V): --</div>
+      <div id="current" class="data-box">Ток (mA): --</div>
+      <div id="loadvoltage" class="data-box">Нагрузка (V): --</div>
+      <div id="power" class="data-box">Мощность (mW): --</div>
+      <h2>Состояние аккумулятора</h2>
+      <div id="battery" class="battery-box">Заряд: --%</div>
     </div>
-    <script src="script.js"></script>
+
+    <div class="map-box">
+      <h2>Карта Поезда</h2>
+      <div id="map"></div>
+      <div id="coordinates-info">
+        <h2>Данные GPS</h2>
+        <div id="point1" class="data-box">Точка 1: --</div>
+        <div id="point2" class="data-box">Точка 2: --</div>
+        <div id="distance-between" class="data-box">Расстояние между точками: --</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const mqttServer = "wss://mqtt.cloa.su:8080";
+    const mqttUser = "ga1maz";
+    const mqttPassword = "almazg1234";
+
+    const client = mqtt.connect(mqttServer, {
+      username: mqttUser,
+      password: mqttPassword,
+    });
+
+    let displayInMeters = false;
+
+    client.on("connect", () => {
+      console.log("Подключено к MQTT серверу");
+      client.subscribe("tfmini/distance");
+      client.subscribe("tfmini/strength");
+      client.subscribe("dht22/temperature");
+      client.subscribe("dht22/humidity");
+      client.subscribe("ina219/volt");
+      client.subscribe("ina219/current");
+      client.subscribe("ina219/loadvoltage");
+      client.subscribe("ina219/power");
+      client.subscribe("battery/charge");
+      client.subscribe("gps/coordinates");
+      client.subscribe("gps/cord2");
+    });
+
+    client.on("message", (topic, message) => {
+      const data = message.toString();
+      switch (topic) {
+        case "tfmini/distance":
+          updateDistance(data);
+          break;
+        case "tfmini/strength":
+          document.getElementById("strength").innerText = `Сила сигнала: ${data}`;
+          break;
+        case "dht22/temperature":
+          document.getElementById("temperature").innerText = `Температура (°C): ${data}`;
+          break;
+        case "dht22/humidity":
+          document.getElementById("humidity").innerText = `Влажность (%): ${data}`;
+          break;
+        case "ina219/volt":
+          document.getElementById("voltage").innerText = `Напряжение (V): ${data}`;
+          break;
+        case "ina219/current":
+          document.getElementById("current").innerText = `Ток (mA): ${data}`;
+          break;
+        case "ina219/loadvoltage":
+          document.getElementById("loadvoltage").innerText = `Нагрузка (V): ${data}`;
+          break;
+        case "ina219/power":
+          document.getElementById("power").innerText = `Мощность (mW): ${data}`;
+          break;
+        case "battery/charge":
+          updateBatteryState(data);
+          break;
+        case "gps/coordinates":
+          updateMarker(1, data);
+          break;
+        case "gps/cord2":
+          updateMarker(2, data);
+          break;
+      }
+    });
+
+    client.on("error", (err) => {
+      console.error("Ошибка подключения:", err);
+    });
+
+    function updateBatteryState(value) {
+      const batteryElement = document.getElementById("battery");
+      const charge = parseInt(value);
+      batteryElement.innerText = `Заряд: ${charge}%`;
+
+      if (charge < 20) {
+        batteryElement.className = "battery-box battery-low";
+      } else if (charge < 50) {
+        batteryElement.className = "battery-box battery-medium";
+      } else {
+        batteryElement.className = "battery-box battery-high";
+      }
+    }
+
+    const map = L.map('map').setView([55.751244, 37.618423], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    let marker1 = L.marker([55.751244, 37.618423]).addTo(map);
+    let marker2 = L.marker([55.760244, 37.628423]).addTo(map);
+    let polyline = L.polyline([marker1.getLatLng(), marker2.getLatLng()], { color: 'blue' }).addTo(map);
+
+    function updateMarker(markerNum, coords) {
+      const coordinates = coords.split(',');
+      const lat = parseFloat(coordinates[0]);
+      const lon = parseFloat(coordinates[1]);
+      if (isNaN(lat) || isNaN(lon)) {
+        console.error(`Некорректные координаты для точки ${markerNum}:`, coords);
+        return;
+      }
+      const marker = markerNum === 1 ? marker1 : marker2;
+      marker.setLatLng([lat, lon]);
+      marker.bindPopup(`<b>Точка ${markerNum}:</b><br>${lat.toFixed(6)}, ${lon.toFixed(6)}`).openPopup();
+      polyline.setLatLngs([marker1.getLatLng(), marker2.getLatLng()]);
+      map.flyToBounds([marker1.getLatLng(), marker2.getLatLng()], {
+        padding: [50, 50],
+        animate: true
+      });
+
+      updateCoordinatesInfo();
+    }
+
+    function updateCoordinatesInfo() {
+      const point1 = marker1.getLatLng();
+      const point2 = marker2.getLatLng();
+
+      document.getElementById("point1").innerText = `Точка 1: ${point1.lat.toFixed(6)}, ${point1.lng.toFixed(6)}`;
+      document.getElementById("point2").innerText = `Точка 2: ${point2.lat.toFixed(6)}, ${point2.lng.toFixed(6)}`;
+
+      const distance = map.distance(point1, point2) / 1000; // Расстояние в километрах
+      document.getElementById("distance-between").innerText = `Расстояние между точками: ${distance.toFixed(2)} км`;
+    }
+  </script>
 </body>
 </html>
