@@ -1,65 +1,45 @@
-// Инициализация карты с включенным контроллером масштабирования
 const map = L.map('map', {
-    zoomControl: true // Включаем контроллер масштабирования
-}).setView([55.751244, 37.618423], 10); // Москва
+    zoomControl: true
+}).setView([55.751244, 37.618423], 10);
 
-// Добавление слоя карты
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
 }).addTo(map);
 
-// Перемещаем контроллер масштабирования в правый нижний угол
 L.control.zoom({
     position: 'bottomright'
 }).addTo(map);
 
-// Инициализация маркеров
-let marker1 = L.marker([55.751244, 37.618423]).addTo(map); // Первое местоположение
-let marker2 = L.marker([55.760244, 37.628423]).addTo(map); // Второе местоположение (пример)
+let marker1 = L.marker([55.751244, 37.618423]).addTo(map);
+let marker2 = L.marker([55.760244, 37.628423]).addTo(map);
 
-// Линия между маркерами
 let polyline = L.polyline([marker1.getLatLng(), marker2.getLatLng()], { color: 'blue' }).addTo(map);
 
-// Создание элемента для отображения расстояния
 let infoPanel = L.control({ position: 'topright' });
 infoPanel.onAdd = function () {
-    this._div = L.DomUtil.create('div', 'info'); // Создание контейнера
-    this.update(); // Инициализация с пустыми данными
+    this._div = L.DomUtil.create('div', 'info');
+    this.update();
     return this._div;
 };
-infoPanel.update = function (coords1 = '', coords2 = '', distance = '') {
-    this._div.innerHTML = `
-        <h3 style="font-size: 18px; font-weight: bold; color: red;">ОТЛАДКА</h4>
-        <p style="font-size: 16px; color: red;">Точка 1: <strong>${coords1}</strong></p>
-        <p style="font-size: 16px; color: red;">Точка 2: <strong>${coords2}</strong></p>
-        <p style="font-size: 16px; color: red;">Расстояние: <strong>${distance}</strong> м</p>
-    `;
-};
-infoPanel.addTo(map);
 
-// Подключение к MQTT через защищенное соединение WebSocket
 const client = mqtt.connect('wss://mqtt.cloa.su:8080', {
     username: 'ga1maz',
     password: 'almazg1234'
 });
 
-client.on('connect', () => {
-    console.log('Подключено к MQTT');
-    client.subscribe('gps/coordinates', (err) => {
-        if (!err) {
-            console.log('Подписались на тему: gps/coordinates');
-        } else {
-            console.error('Ошибка подписки:', err);
-        }
-    });
-
-    client.subscribe('gps/cord2', (err) => {
-        if (!err) {
-            console.log('Подписались на тему: gps/cord2');
-        } else {
-            console.error('Ошибка подписки:', err);
-        }
-    });
+client.on("connect", () => {
+    console.log("Подключено к MQTT серверу");
+    client.subscribe("tfmini/distance");
+    client.subscribe("tfmini/strength");
+    client.subscribe("dht22/temperature");
+    client.subscribe("dht22/humidity");
+    client.subscribe("ina219/volt");
+    client.subscribe("ina219/current");
+    client.subscribe("ina219/loadvoltage"); 
+    client.subscribe("ina219/power");
+    client.subscribe("battery/charge");
+    client.subscribe("gps/coordinates");
+    client.subscribe("gps/cord2");
 });
 
 client.on('message', (topic, message) => {
@@ -76,7 +56,6 @@ client.on('message', (topic, message) => {
 
             updateDistance();
 
-            // Автозум, чтобы показать обе точки на карте
             map.flyToBounds([marker1.getLatLng(), marker2.getLatLng()], {
                 padding: [50, 50],
                 animate: true
@@ -114,17 +93,178 @@ client.on('error', (error) => {
     console.error('Ошибка подключения:', error);
 });
 
-// Функция для обновления расстояния между маркерами
 function updateDistance() {
     const latlng1 = marker1.getLatLng();
     const latlng2 = marker2.getLatLng();
     const distance = latlng1.distanceTo(latlng2); // Расстояние в метрах
     console.log(`Расстояние между маркерами: ${distance.toFixed(2)} метров`);
 
-    // Обновляем информацию в панели
     infoPanel.update(
         `${latlng1.lat.toFixed(6)}, ${latlng1.lng.toFixed(6)}`,
         `${latlng2.lat.toFixed(6)}, ${latlng2.lng.toFixed(6)}`,
         distance.toFixed(2)
     );
 }
+let batteryChart;
+let temperatureChart;
+
+client.on("message", (topic, message) => {
+    const data = message.toString();
+    switch (topic) {
+        case "tfmini/distance":
+            document.getElementById("distance").innerText = `Дистанция: ${data} мм`;
+            break;
+        case "tfmini/strength":
+            document.getElementById("strength").innerText = `Сила сигнала: ${data}`;
+            break;
+        case "dht22/temperature":
+            document.getElementById("temperature").innerText = `Температура (°C): ${data}`;
+            updateTemperatureChart(parseFloat(data));
+            break;
+        case "dht22/humidity":
+            document.getElementById("humidity").innerText = `Влажность (%): ${data}`;
+            break;
+        case "ina219/volt":
+            document.getElementById("voltage").innerText = `Напряжение (V): ${data}`;
+            break;
+        case "ina219/current":
+            document.getElementById("current").innerText = `Ток (mA): ${data}`;
+            break;
+        case "ina219/loadvoltage":
+            document.getElementById("loadvoltage").innerText = `Нагрузка (V): ${data}`;
+            break;
+        case "ina219/power":
+            document.getElementById("power").innerText = `Мощность (mW): ${data}`;
+            break;
+        case "battery/charge":
+            const charge = parseInt(data);
+            document.getElementById("battery").innerText = `Заряд: ${charge}%`;
+            updateBatteryChart(charge);
+            updateBatteryBox(charge);
+            break;
+        default:
+            console.log(`Неизвестный топик: ${topic}`);
+    }
+});
+
+client.on("error", (err) => {
+    console.error("Ошибка подключения:", err);
+});
+
+function updateBatteryBox(charge) {
+    const batteryBox = document.getElementById("battery");
+    batteryBox.innerText = `Заряд: ${charge}%`;
+
+    if (charge > 66) {
+        batteryBox.style.backgroundColor = 'green';
+    } else if (charge > 33) {
+        batteryBox.style.backgroundColor = 'yellow';
+    } else {
+        batteryBox.style.backgroundColor = 'red';
+    }
+}
+
+function initializeCharts() {
+    const batteryCtx = document.getElementById('battery-chart').getContext('2d');
+    batteryChart = new Chart(batteryCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Заряд АКБ (%)',
+                data: [],
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Время'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Заряд (%)'
+                    },
+                    min: 0,
+                    max: 100
+                }
+            }
+        }
+    });
+
+    const temperatureCtx = document.getElementById('temperature-chart').getContext('2d');
+    temperatureChart = new Chart(temperatureCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Температура (°C)',
+                data: [],
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Время'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Температура (°C)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateBatteryChart(value) {
+    const now = new Date().toLocaleTimeString();
+    if (batteryChart.data.labels.length > 20) {
+        batteryChart.data.labels.shift();
+        batteryChart.data.datasets[0].data.shift();
+    }
+    batteryChart.data.labels.push(now);
+    batteryChart.data.datasets[0].data.push(value);
+    batteryChart.update();
+}
+
+function updateTemperatureChart(value) {
+    const now = new Date().toLocaleTimeString();
+    if (temperatureChart.data.labels.length > 20) {
+        temperatureChart.data.labels.shift();
+        temperatureChart.data.datasets[0].data.shift();
+    }
+    temperatureChart.data.labels.push(now);
+    temperatureChart.data.datasets[0].data.push(value);
+    temperatureChart.update();
+}
+
+initializeCharts();
+
+window.onload = function () {
+    setTimeout(function () {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        loadingOverlay.style.transition = 'opacity 1s';
+        loadingOverlay.style.opacity = '0';
+
+        setTimeout(function () {
+            loadingOverlay.style.display = 'none';
+        }, 2000);
+    }, 5000);
+    if (window.innerWidth < 768) {
+        document.getElementById('mobileWarning').style.display = 'flex';
+    }
+};
