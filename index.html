@@ -211,27 +211,32 @@
         transform: translateY(0);
       }
     }
-    
-    .mobile-warning {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: black;
-      color: white;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 10000;
-      text-align: center;
-    }
 
-    .mobile-warning .icon {
-      color: red;
-      font-size: 50px;
-      margin-bottom: 20px;
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+      }
+
+      .container {
+        width: 90%;
+        height: auto;
+        margin-bottom: 20px;
+      }
+
+      .map-container, .status-container, .graph-container {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      #map {
+        height: 200px;
+      }
+
+      .chart {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -243,11 +248,6 @@
       <div class="dot"></div>
       <div class="dot"></div>
     </div>
-  </div>
-
-  <div class="mobile-warning" id="mobileWarning">
-    <div class="icon">❗</div>
-    <div>Эта страница доступна только с ноутбука, ПК или планшета</div>
   </div>
 
   <div class="container map-container">
@@ -458,9 +458,6 @@
           loadingOverlay.style.display = 'none';
         }, 2000);
       }, 5000);
-      if (window.innerWidth < 768) {
-        document.getElementById('mobileWarning').style.display = 'flex';
-      }
     };
   </script>
 </body>
