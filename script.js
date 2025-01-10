@@ -151,10 +151,10 @@ function updateTemperatureData(data) {
     const thermostatStatus = document.getElementById("thermostat-status");
     if (temperature > 15) {
         thermostatStatus.innerText = 'Термостат: Не работает';
-        thermostatStatus.style.backgroundColor = 'red';
+        thermostatStatus.style.backgroundColor = 'rgb(255, 0, 0)';
     } else {
         thermostatStatus.innerText = 'Термостат: Работает';
-        thermostatStatus.style.backgroundColor = 'green';
+        thermostatStatus.style.backgroundColor = 'rgb(9, 255, 0)';
     }
 }
 
@@ -187,10 +187,10 @@ function updateBatteryData(data) {
     const batteryReplacement = document.getElementById("battery-replacement");
     if (charge < 15) {
         batteryReplacement.innerText = 'Замена аккумулятора: Требуется';
-        batteryReplacement.style.backgroundColor = 'red';
+        batteryReplacement.style.backgroundColor = 'rgb(255, 0, 0)';
     } else {
         batteryReplacement.innerText = 'Замена аккумулятора: Не требуется';
-        batteryReplacement.style.backgroundColor = 'green';
+        batteryReplacement.style.backgroundColor = 'rgb(9, 255, 0)';
     }
 }
 
@@ -199,11 +199,11 @@ function updateBatteryBox(charge) {
     batteryBox.innerText = `Заряд: ${charge}%`;
 
     if (charge > 66) {
-        batteryBox.style.backgroundColor = 'green';
+        batteryBox.style.backgroundColor = 'rgb(9, 255, 0)';
     } else if (charge > 33) {
-        batteryBox.style.backgroundColor = 'yellow';
+        batteryBox.style.backgroundColor = 'rgb(187, 255, 0)';
     } else {
-        batteryBox.style.backgroundColor = 'red';
+        batteryBox.style.backgroundColor = 'rgb(255, 0, 0)';
     }
 }
 
