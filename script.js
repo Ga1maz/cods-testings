@@ -297,7 +297,38 @@ function updateTemperatureChart(value) {
 
 initializeCharts();
 
-window.onload = function () {
+function updateLoadingText(text) {
+    document.getElementById('loadingText').innerText = text;
+}
+
+function simulateLoading() {
+    return new Promise((resolve) => {
+        const loadingSteps = [
+            "Подгрузка CSS Leaflet",
+            "Подгрузка JS Leaflet",
+            "Подгрузка JS Mqtt",
+            "Подгрузка CSS самого сайта",
+            "Подгрузка JS самого сайта",
+            "Соединено с MQTT"
+        ];
+
+        let step = 0;
+
+        const interval = setInterval(() => {
+            if (step < loadingSteps.length) {
+                updateLoadingText(loadingSteps[step]);
+                step++;
+            } else {
+                clearInterval(interval);
+                resolve();
+            }
+        }, 500);
+    });
+}
+
+window.onload = async function () {
+    await simulateLoading();
+
     setTimeout(function () {
         const loadingOverlay = document.getElementById('loadingOverlay');
         loadingOverlay.style.transition = 'opacity 1s';
@@ -305,9 +336,8 @@ window.onload = function () {
 
         setTimeout(function () {
             loadingOverlay.style.display = 'none';
-        }, 2000);
-    }, 5000);
-    if (window.innerWidth < 768) {
-        document.getElementById('mobileWarning').style.display = 'flex';
-    }
+        }, 1000);
+    }, 3000); 
 };
+
+document.querySelectorAll('.container').forEach(el => el.classList.add('shadow'));
