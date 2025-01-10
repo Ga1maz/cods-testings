@@ -216,7 +216,7 @@ function initializeCharts() {
             datasets: [{
                 label: 'Заряд АКБ (%)',
                 data: [],
-                borderColor: 'rgb(75, 192, 192)',
+                borderColor: 'rgb(255, 0, 0)',
                 tension: 0.1
             }]
         },
@@ -249,7 +249,7 @@ function initializeCharts() {
             datasets: [{
                 label: 'Температура (°C)',
                 data: [],
-                borderColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(9, 255, 0)',
                 tension: 0.1
             }]
         },
