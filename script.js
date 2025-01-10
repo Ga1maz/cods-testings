@@ -35,7 +35,11 @@ client.on("connect", () => {
     client.subscribe("dht22/humidity");
     client.subscribe("ina219/volt");
     client.subscribe("ina219/current");
+<<<<<<< HEAD
     client.subscribe("ina219/loadvoltage"); 
+=======
+    client.subscribe("ina219/loadvoltage");
+>>>>>>> 26e8e67 (UpDate)
     client.subscribe("ina219/power");
     client.subscribe("battery/charge");
     client.subscribe("gps/coordinates");
@@ -267,4 +271,8 @@ window.onload = function () {
     if (window.innerWidth < 768) {
         document.getElementById('mobileWarning').style.display = 'flex';
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 26e8e67 (UpDate)
