@@ -149,7 +149,7 @@ function updateTemperatureData(data) {
     updateTemperatureChart(temperature);
 
     const thermostatStatus = document.getElementById("thermostat-status");
-    if (temperature < 15) {
+    if (temperature > 15) {
         thermostatStatus.innerText = 'Термостат: Не работает';
         thermostatStatus.style.backgroundColor = 'red';
     } else {
