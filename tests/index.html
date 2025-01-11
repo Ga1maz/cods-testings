@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yandex Map Customization</title>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU" type="text/javascript"></script>
+    <style>
+        #map {
+            width: 100%;
+            height: 100vh; /* Высота карты на всю высоту окна */
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        ymaps.ready(init);
+
+        function init() {
+            // Инициализация карты с начальными настройками
+            const map = new ymaps.Map('map', {
+                center: [54.807530, 56.118780], // Центр карты
+                zoom: 10, // Уровень масштабирования
+                controls: ['zoomControl'], // Контролы
+                type: 'yandex#map' // Тип карты - Обычная карта
+            });
+
+            // Загрузка стиля из JSON файла
+            fetch('customization.json')
+                .then(response => response.json())
+                .then(customization => {
+                    // Создание и добавление слоя с кастомизацией
+                    const layer = new ymaps.Layer('https://core-renderer-tiles.maps.yandex.net/tiles?l=map', {
+                        tileTransparent: true
+                    });
+                    layer.options.set('tileTransparent', true);
+                    layer.options.set('customization', customization);
+
+                    const customMapType = new ymaps.MapType('custom#dark', [layer]);
+                    ymaps.mapType.storage.add('custom#dark', customMapType);
+                    map.setType('custom#dark');
+                })
+                .catch(error => console.error('Ошибка загрузки стиля:', error));
+        }
+    </script>
+</body>
+</html>
