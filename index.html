@@ -6,20 +6,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Статусы и Карта</title>
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://api-maps.yandex.ru/2.1/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="/styles.css" />
 </head>
 
 <body>
-  <!-- Удален блок загрузки -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="dots-container">
+        <div class="dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+        <div class="loading-text" id="loadingText">Загрузка...</div>
+    </div>
+</div>
   <div class="mobile-warning" id="mobileWarning">
     <div class="icon">❗</div>
     <div>Эта страница доступна только с ноутбука, ПК или планшета</div>
   </div>
   <div class="container map-container">
     <h2>Карта Поезда</h2>
-    <div id="map" style="width: 100%; height: 100%;"></div>
+    <div id="map"></div>
     <div class="gps-info">
       <h2>GPS Данные</h2>
       <div id="coordinates-info">
