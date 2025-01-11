@@ -1,6 +1,7 @@
 ymaps.ready(init);
 
 function init() {
+    console.log("Инициализация карты...");
     const map = new ymaps.Map('map', {
         center: [55.751244, 37.618423], // Центр карты
         zoom: 10, // Уровень масштабирования
@@ -44,6 +45,7 @@ function init() {
     map.geoObjects.add(polyline);
 
     // Подключение к MQTT серверу
+    console.log("Подключение к MQTT серверу...");
     const client = mqtt.connect('wss://mqtt.cloa.su:8080', {
         username: 'ga1maz',
         password: 'almazg1234'
@@ -66,6 +68,7 @@ function init() {
 
     client.on('message', (topic, message) => {
         const data = message.toString();
+        console.log(`Получено сообщение от ${topic}: ${data}`);
         switch (topic) {
             case 'gps/coordinates':
                 updateMarker1(data);
@@ -227,6 +230,7 @@ function init() {
     }
 
     function initializeCharts() {
+        console.log("Инициализация графиков...");
         const batteryCtx = document.getElementById('battery-chart').getContext('2d');
         batteryChart = new Chart(batteryCtx, {
             type: 'line',
@@ -315,49 +319,6 @@ function init() {
     }
 
     initializeCharts();
-
-    function updateLoadingText(text) {
-        document.getElementById('loadingText').innerText = text;
-    }
-
-    function simulateLoading() {
-        return new Promise((resolve) => {
-            const loadingSteps = [
-                "Подгрузка CSS Leaflet",
-                "Подгрузка JS Leaflet",
-                "Подгрузка JS Mqtt",
-                "Подгрузка CSS самого сайта",
-                "Подгрузка JS самого сайта",
-                "Соединено с MQTT"
-            ];
-
-            let step = 0;
-
-            const interval = setInterval(() => {
-                if (step < loadingSteps.length) {
-                    updateLoadingText(loadingSteps[step]);
-                    step++;
-                } else {
-                    clearInterval(interval);
-                    resolve();
-                }
-            }, 500);
-        });
-    }
-
-    window.onload = async function () {
-        await simulateLoading();
-
-        setTimeout(function () {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            loadingOverlay.style.transition = 'opacity 1s';
-            loadingOverlay.style.opacity = '0';
-
-            setTimeout(function () {
-                loadingOverlay.style.display = 'none';
-            }, 1000);
-        }, 3000);
-    };
 
     document.querySelectorAll('.container').forEach(el => el.classList.add('shadow'));
 }
