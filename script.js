@@ -20,7 +20,7 @@ let marker2 = L.marker([55.760244, 37.628423]).addTo(map);
 let polyline = L.polyline([marker1.getLatLng(), marker2.getLatLng()], { color: 'blue' }).addTo(map);
 
 // Подключение к MQTT серверу
-const client = mqtt.connect('wss://mqtt.cloa.su:8080', {
+const client = mqtt.connect('wss://mqtt.cloa.su:8081', {
     username: 'ga1maz',
     password: 'almazg1234'
 });
