@@ -1,30 +1,29 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Быстрый старт. Размещение интерактивной карты на странице</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Яндекс Карта v3</title>
     <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU"></script>
     <script>
-        // Ждем загрузки API перед вызовом initMap
-        window.onload = function() {
-            ymaps.ready(() => {
-                initMap();
-            });
-        };
-
-        function initMap() {
-            const map = new ymaps.Map('map', {
-                center: [55.733842, 37.588144], // Широта, долгота
-                zoom: 10
+        async function initMap() {
+            await ymaps3.ready;
+            const { YMap, YMapDefaultSchemeLayer } = ymaps3;
+            
+            const map = new YMap(document.getElementById('map'), {
+                location: {
+                    center: [37.588144, 55.733842], // Долгота, широта (в v3 поменялся порядок!)
+                    zoom: 10
+                }
             });
 
-            // Добавляем слой схемы
-            map.layers.add(new ymaps.Layer('yandex#map'));
+            // Добавляем слой карты
+            map.addChild(new YMapDefaultSchemeLayer());
         }
-    </script>
-  </head>
 
-  <body>
-    <div id="map" style="width: 600px; height: 400px"></div>
-  </body>
+        window.onload = initMap;
+    </script>
+</head>
+<body>
+    <div id="map" style="width: 600px; height: 400px;"></div>
+</body>
 </html>
