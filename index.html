@@ -7,25 +7,19 @@
     <script>
         // Ждем загрузки API перед вызовом initMap
         window.onload = function() {
-            ymaps3.ready.then(() => {
+            ymaps.ready(() => {
                 initMap();
             });
         };
 
-        async function initMap() {
-            const {YMap, YMapDefaultSchemeLayer} = ymaps3;
+        function initMap() {
+            const map = new ymaps.Map('map', {
+                center: [55.733842, 37.588144], // Широта, долгота
+                zoom: 10
+            });
 
-            const map = new YMap(
-                document.getElementById('map'),
-                {
-                    location: {
-                        center: [37.588144, 55.733842],
-                        zoom: 10
-                    }
-                }
-            );
-
-            map.addChild(new YMapDefaultSchemeLayer());
+            // Добавляем слой схемы
+            map.layers.add(new ymaps.Layer('yandex#map'));
         }
     </script>
   </head>
