@@ -833,34 +833,32 @@
   </div>
 </body>
   <script type="text/javascript">
-    initMap();
+    async function initMap() {
+        // Ожидаем загрузки API
+        await ymaps3.ready;
 
-async function initMap() {
-    // Промис `ymaps3.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
-    await ymaps3.ready;
+        // Импортируем необходимые классы
+        const { YMap, YMapDefaultSchemeLayer } = ymaps3;
 
-    const {YMap, YMapDefaultSchemeLayer} = ymaps3;
+        // Инициализируем карту
+        const map = new YMap(
+            // Контейнер для карты
+            document.getElementById('Rectangle_32'),
 
-    // Иницилиазируем карту
-    const map = new YMap(
-        // Передаём ссылку на HTMLElement контейнера
-        document.getElementById('Rectangle_32'),
-
-        // Передаём параметры инициализации карты
-        {
-            location: {
-                // Координаты центра карты
-                center: [54.782631, 32.045097],
-
-                // Уровень масштабирования
-                zoom: 10
+            // Параметры инициализации
+            {
+                location: {
+                    center: [54.782631, 32.045097], // Координаты центра
+                    zoom: 10 // Уровень масштабирования
+                }
             }
-        }
-    );
+        );
 
-    // Добавляем слой для отображения схематической карты
-    map.addChild(new YMapDefaultSchemeLayer());
-}
+        // Добавляем слой для отображения схематической карты
+        map.addChild(new YMapDefaultSchemeLayer());
+    }
 
+    // Вызываем функцию инициализации
+    initMap();
 </script>
 </html>
