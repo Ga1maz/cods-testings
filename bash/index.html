@@ -6858,23 +6858,15 @@
 
                 window.onload = initMap;
 
-    const markerElement = document.createElement('div');
-    markerElement.className = 'marker-class';
-    markerElement.innerText = "I'm marker!";
-
-    const marker = new YMapMarker(
-      {
-        source: 'markerSource',
-        coordinates: [37.588144, 55.733842],
-        draggable: true,
-        mapFollowsOnDrag: true
-      },
-      markerElement
-    );
-
-    map.addChild(marker);
-
-    
+    const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
+    ```js translate=no
+    const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-markers');
+    map.addChild(new YMapDefaultMarker({
+        coordinates: [34, 54],
+        title: 'Hello World!',
+        subtitle: 'kind and bright',
+        color: 'blue'
+    }));```
 </script>
 <body>
     <div id="map" style="width: 500px; height: 750px;"></div>
