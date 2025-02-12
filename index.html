@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <title>Яндекс Карта v3</title>
@@ -8,35 +7,45 @@
     <script>
         async function initMap() {
             await ymaps3.ready;
-            const { YMap, YMapDefaultSchemeLayer, YMapMarker, YMapDefaultFeaturesLayer } = ymaps3;
-            const response = await fetch('customization.json');
-            const customization = await response.json();
+            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapMarker } = ymaps3;
 
-            const map = new YMap(document.getElementById('map'), {
-                location: {
-                    center: [32.045098, 54.782630], // Долгота, широта (в v3 поменялся порядок!)
-                    zoom: 10
-                }
-            });
+            try {
+                const response = await fetch('customization.json');
+                const customization = await response.json();
 
-            map.addChild(new YMapDefaultSchemeLayer({ customization }));
+                const map = new YMap(document.getElementById('map'), {
+                    location: {
+                        center: [32.045098, 54.782630],
+                        zoom: 10
+                    }
+                });
 
-            // Добавляем слой объектов (необходим для работы меток)
-            const featuresLayer = new YMapDefaultFeaturesLayer();
-            map.addChild(featuresLayer);
+                map.addChild(new YMapDefaultSchemeLayer({ customization }));
+                map.addChild(new YMapDefaultFeaturesLayer());
 
-            // Добавление метки
-            const marker = new YMapMarker({
-                coordinates: [32.045098, 54.782630],
-                draggable: false // Метка не перемещается
-            });
-            featuresLayer.addChild(marker);
+                // Создаем элемент маркера
+                const markerElement = document.createElement('div');
+                markerElement.innerHTML = '📍'; // Кастомный вид
+                markerElement.style.fontSize = '32px';
+
+                // Добавляем маркеры
+                map.addChild(new YMapMarker(
+                    { coordinates: [32.045098, 54.782630] },
+                    markerElement.cloneNode(true)
+                ));
+
+                map.addChild(new YMapMarker(
+                    { coordinates: [32.1, 54.8] }, // Вторая точка
+                    markerElement.cloneNode(true)
+                ));
+
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
         }
     </script>
 </head>
-
 <body onload="initMap()">
     <div id="map" style="width: 1500px; height: 800px;"></div>
 </body>
-
 </html>
