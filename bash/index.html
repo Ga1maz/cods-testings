@@ -6856,8 +6856,6 @@
 
                 }
 
-                window.onload = initMap;
-
     const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
     ```js translate=no
     const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-markers');
@@ -6866,7 +6864,11 @@
         title: 'Hello World!',
         subtitle: 'kind and bright',
         color: 'blue'
-    }));```
+    }));```    
+
+                window.onload = initMap;
+
+
 </script>
 <body>
     <div id="map" style="width: 500px; height: 750px;"></div>
