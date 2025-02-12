@@ -8,7 +8,7 @@
     <script>
         async function initMap() {
             await ymaps3.ready;
-            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer } = ymaps3;
+            const { YMap, YMapDefaultSchemeLayer } = ymaps3;
             const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
             const response = await fetch('customization.json');
             const customization = await response.json();
@@ -20,17 +20,7 @@
             });
             // Добавляем слой карты
             map.addChild(new YMapDefaultSchemeLayer({ customization }));
-            map.addChild(new YMapDefaultFeaturesLayer());
-
         }
-        const marker = new YMapDefaultMarker({
-                coordinates: [32.045098, 54.782630], // Координаты маркера
-                title: 'Смоленск', // Заголовок маркера
-                subtitle: 'какой то текст', // Подзаголовок маркера
-                color: 'blue' // Цвет маркера
-            });
-            map.addChild(marker);
-        window.onload = initMap;
     </script>
 </head>
 
