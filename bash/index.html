@@ -6857,6 +6857,24 @@
                 }
 
                 window.onload = initMap;
+
+    const markerElement = document.createElement('div');
+    markerElement.className = 'marker-class';
+    markerElement.innerText = "I'm marker!";
+
+    const marker = new YMapMarker(
+      {
+        source: 'markerSource',
+        coordinates: [37.588144, 55.733842],
+        draggable: true,
+        mapFollowsOnDrag: true
+      },
+      markerElement
+    );
+
+    map.addChild(marker);
+
+    
 </script>
 <body>
     <div id="map" style="width: 500px; height: 750px;"></div>
