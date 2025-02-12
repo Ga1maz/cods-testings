@@ -9,18 +9,32 @@
         async function initMap() {
             await ymaps3.ready;
             const { YMap, YMapDefaultSchemeLayer } = ymaps3;
-            const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
+            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-markers'); // Исправленный импорт
+
+            // Загрузка customization.json
             const response = await fetch('customization.json');
             const customization = await response.json();
+
             const map = new YMap(document.getElementById('map'), {
                 location: {
                     center: [32.045098, 54.782630], // Долгота, широта (в v3 поменялся порядок!)
                     zoom: 10
                 }
             });
+
             // Добавляем слой карты
             map.addChild(new YMapDefaultSchemeLayer({ customization }));
+
+            // Добавляем маркер
+            map.addChild(new YMapDefaultMarker({
+                coordinates: [32.045098, 54.782630], // Координаты маркера
+                title: 'Hello World!',
+                subtitle: 'kind and bright',
+                color: 'blue' // Цвет маркера
+            }));
         }
+
+        initMap();
     </script>
 </head>
 
