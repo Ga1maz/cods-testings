@@ -9,8 +9,6 @@
         async function initMap() {
             await ymaps3.ready;
             const { YMap, YMapDefaultSchemeLayer } = ymaps3;
-            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
-
             const response = await fetch('customization.json');
             const customization = await response.json();
 
@@ -23,13 +21,6 @@
 
             // Добавляем слой карты
             map.addChild(new YMapDefaultSchemeLayer({ customization }));
-
-            // Добавляем метку
-            const marker = new YMapDefaultMarker({
-                coordinates: [32.045098, 54.782630], // Долгота, широта
-                title: "Моя метка"
-            });
-            map.addChild(marker);
         }
     </script>
 </head>
