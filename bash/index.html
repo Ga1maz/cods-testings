@@ -5,8 +5,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Башня</title>
+    <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU"></script>
 </head>
-<body>
+<script>
+    async function initMap() {
+        await ymaps3.ready;
+        const { YMap, YMapDefaultSchemeLayer } = ymaps3;
 
+        const map = new YMap(document.getElementById('map'), {
+            location: {
+                center: [32.045098, 54.782630],
+                zoom: 10
+            }
+        });
+        map.addChild(new YMapDefaultSchemeLayer({
+                customization:
+</script>
+<body>
+    <div id="map" style="width: 600px; height: 400px"></div>
 </body>
 </html>
