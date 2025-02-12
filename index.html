@@ -8,25 +8,32 @@
     <script>
         async function initMap() {
             await ymaps3.ready;
-            const { YMap, YMapDefaultSchemeLayer } = ymaps3;
+            const { YMap, YMapDefaultSchemeLayer, YMapMarker } = ymaps3;
             const response = await fetch('customization.json');
             const customization = await response.json();
 
             const map = new YMap(document.getElementById('map'), {
                 location: {
                     center: [32.045098, 54.782630], // Долгота, широта (в v3 поменялся порядок!)
-                    zoom: 10
+                            zoom: 10
+                        }
+                    });
+
+                    map.addChild(new YMapDefaultSchemeLayer({ customization }));
+
+                    // Добавление метки
+                    const marker = new YMapMarker({
+                        coordinates: [32.045098, 54.782630],
+                        draggable: false // Метка не перемещается
+                    });
+                    map.addChild(marker);
                 }
-            });
+            </script>
+        </head>
 
-            // Добавляем слой карты
-            map.addChild(new YMapDefaultSchemeLayer({ customization }));
-        }
-    </script>
-</head>
+        <body onload="initMap()">
+            <div id="map" style="width: 1500px; height: 800px;"></div>
+        </body>
 
-<body onload="initMap()">
-    <div id="map" style="width: 1500px; height: 800px;"></div>
-</body>
-
-</html>
+        </html>
+        
