@@ -18,6 +18,17 @@
                 zoom: 10
             }
         });
+
+        const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-markers');
+
+        // Предположим, что `map` уже инициализирована
+        map.addChild(new YMapDefaultMarker({
+            coordinates: [34, 54], // Убедитесь, что координаты корректны
+            title: 'Hello World!',
+            subtitle: 'kind and bright',
+            color: 'blue' // Убедитесь, что цвет поддерживается
+        }));
+
         map.addChild(new YMapDefaultSchemeLayer({
                 customization: [
     {
@@ -6855,16 +6866,6 @@
         }));
 
                 }
-
-    const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
-    ```js translate=no
-    const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-markers');
-    map.addChild(new YMapDefaultMarker({
-        coordinates: [34, 54],
-        title: 'Hello World!',
-        subtitle: 'kind and bright',
-        color: 'blue'
-    }));```    
 
                 window.onload = initMap;
 
