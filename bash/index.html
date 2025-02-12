@@ -18,17 +18,6 @@
                 zoom: 10
             }
         });
-
-        const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-markers');
-
-        // Предположим, что `map` уже инициализирована
-        map.addChild(new YMapDefaultMarker({
-            coordinates: [34, 54], // Убедитесь, что координаты корректны
-            title: 'Hello World!',
-            subtitle: 'kind and bright',
-            color: 'blue' // Убедитесь, что цвет поддерживается
-        }));
-
         map.addChild(new YMapDefaultSchemeLayer({
                 customization: [
     {
@@ -6867,9 +6856,7 @@
 
                 }
 
-                window.onload = initMap;
-
-
+                window.onload = initMap;zz
 </script>
 <body>
     <div id="map" style="width: 500px; height: 750px;"></div>
