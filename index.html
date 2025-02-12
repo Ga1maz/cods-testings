@@ -4,51 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Яндекс Карта v3</title>
-    <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU&modules=@yandex/ymaps3-markers"></script>
-</head>
-
-<body>
-    <div id="map" style="width: 1500px; height: 800px;"></div>
-
+    <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU"></script>
     <script>
-        window.addEventListener("load", async function () {
-            if (!window.ymaps3) {
-                console.error("Yandex Maps API v3 не загрузилось.");
-                return;
-            }
-
+        async function initMap() {
             await ymaps3.ready;
             const { YMap, YMapDefaultSchemeLayer } = ymaps3;
-            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-markers');
+            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
 
-            // Загрузка customization.json
-            try {
-                const response = await fetch('customization.json');
-                if (!response.ok) throw new Error('Ошибка загрузки customization.json');
-                const customization = await response.json();
+            const response = await fetch('customization.json');
+            const customization = await response.json();
 
-                const map = new YMap(document.getElementById('map'), {
-                    location: {
-                        center: [32.045098, 54.782630], // Долгота, широта
-                        zoom: 10
-                    }
-                });
+            const map = new YMap(document.getElementById('map'), {
+                location: {
+                    center: [32.045098, 54.782630], // Долгота, широта (в v3 поменялся порядок!)
+                    zoom: 10
+                }
+            });
 
-                // Добавляем слой карты
-                map.addChild(new YMapDefaultSchemeLayer({ customization }));
+            // Добавляем слой карты
+            map.addChild(new YMapDefaultSchemeLayer({ customization }));
 
-                // Добавляем маркер
-                map.addChild(new YMapDefaultMarker({
-                    coordinates: [32.045098, 54.782630],
-                    title: 'Hello World!',
-                    subtitle: 'kind and bright',
-                    color: 'blue'
-                }));
-            } catch (error) {
-                console.error("Ошибка при инициализации карты:", error);
-            }
-        });
+            // Добавляем метку
+            const marker = new YMapDefaultMarker({
+                coordinates: [32.045098, 54.782630], // Долгота, широта
+                title: "Моя метка"
+            });
+            map.addChild(marker);
+        }
     </script>
+</head>
+
+<body onload="initMap()">
+    <div id="map" style="width: 1500px; height: 800px;"></div>
 </body>
 
 </html>
