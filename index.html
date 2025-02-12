@@ -8,32 +8,35 @@
     <script>
         async function initMap() {
             await ymaps3.ready;
-            const { YMap, YMapDefaultSchemeLayer, YMapMarker } = ymaps3;
+            const { YMap, YMapDefaultSchemeLayer, YMapMarker, YMapDefaultFeaturesLayer } = ymaps3;
             const response = await fetch('customization.json');
             const customization = await response.json();
 
             const map = new YMap(document.getElementById('map'), {
                 location: {
                     center: [32.045098, 54.782630], // Долгота, широта (в v3 поменялся порядок!)
-                            zoom: 10
-                        }
-                    });
-
-                    map.addChild(new YMapDefaultSchemeLayer({ customization }));
-
-                    // Добавление метки
-                    const marker = new YMapMarker({
-                        coordinates: [32.045098, 54.782630],
-                        draggable: false // Метка не перемещается
-                    });
-                    map.addChild(marker);
+                    zoom: 10
                 }
-            </script>
-        </head>
+            });
 
-        <body onload="initMap()">
-            <div id="map" style="width: 1500px; height: 800px;"></div>
-        </body>
+            map.addChild(new YMapDefaultSchemeLayer({ customization }));
 
-        </html>
-        
+            // Добавляем слой объектов (необходим для работы меток)
+            const featuresLayer = new YMapDefaultFeaturesLayer();
+            map.addChild(featuresLayer);
+
+            // Добавление метки
+            const marker = new YMapMarker({
+                coordinates: [32.045098, 54.782630],
+                draggable: false // Метка не перемещается
+            });
+            featuresLayer.addChild(marker);
+        }
+    </script>
+</head>
+
+<body onload="initMap()">
+    <div id="map" style="width: 1500px; height: 800px;"></div>
+</body>
+
+</html>
