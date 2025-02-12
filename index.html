@@ -17,15 +17,16 @@
                 }
             });
 
-            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-markers');
+            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
 
-            // Добавляем маркер
-            map.addChild(new YMapDefaultMarker({
-                coordinates: [32.045098, 54.782630], // Координаты маркера (те же, что и центр карты)
-                title: 'Hello World!',
-                subtitle: 'kind and bright',
+            const marker = new YMapDefaultMarker({
+                coordinates: [32.045098, 54.782630], // Координаты маркера
+                title: 'Смоленск', // Заголовок маркера
+                subtitle: 'какой то текст', // Подзаголовок маркера
                 color: 'blue' // Цвет маркера
-            }));
+            });
+
+            map.addChild(marker);
 
             // Добавляем слой карты
             map.addChild(new YMapDefaultSchemeLayer({
