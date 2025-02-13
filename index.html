@@ -29,15 +29,11 @@
                 markerElement.style.fontSize = '32px';
 
                 // Добавляем маркеры
-                map.addChild(new YMapMarker(
-                    { coordinates: [32.045098, 54.782630] },
-                    markerElement.cloneNode(true)
-                ));
-
-                map.addChild(new YMapMarker(
-                    { coordinates: [32.1, 54.8] }, // Вторая точка
-                    markerElement.cloneNode(true)
-                ));
+                const marker = new YMapMarker({
+                    coordinates: [32.045098, 54.782630],
+                    draggable: false
+                });
+                featuresLayer.addChild(marker);
 
             } catch (error) {
                 console.error('Ошибка:', error);
