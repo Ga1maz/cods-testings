@@ -24,13 +24,20 @@
                 const featuresLayer = new YMapDefaultFeaturesLayer();
                 map.addChild(featuresLayer);
 
+                // Создаём HTML-элемент для маркера
+                const markerElement = document.createElement('div');
+                markerElement.style.width = '20px';
+                markerElement.style.height = '20px';
+                markerElement.style.backgroundColor = 'red';
+                markerElement.style.borderRadius = '50%';
+
                 // Добавляем маркер
                 const marker = new YMapMarker({
                     coordinates: [32.045098, 54.782630],
                     draggable: false
-                });
+                }, markerElement);
 
-                map.addChild(marker); // Исправлено
+                map.addChild(marker);
 
             } catch (error) {
                 console.error('Ошибка:', error);
