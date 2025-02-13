@@ -8,7 +8,7 @@
         async function initMap() {
             await ymaps3.ready;
             const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer } = ymaps3;
-            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-markers');
+            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme'); // Импортируем маркер
 
             try {
                 const response = await fetch('customization.json');
@@ -24,15 +24,16 @@
                 map.addChild(new YMapDefaultSchemeLayer({ customization }));
                 map.addChild(new YMapDefaultFeaturesLayer());
 
-                // Добавляем стандартный маркер Яндекса
+                // Добавляем маркер по умолчанию
                 const marker = new YMapDefaultMarker({
                     coordinates: [32.045098, 54.782630],
                     title: 'Привет, мир!',
-                    subtitle: 'Мое местоположение',
-                    color: 'red' // Можно менять на 'blue', 'green' и т. д.
+                    subtitle: 'Яндекс.Карты v3',
+                    color: 'blue',
+                    size: 'normal'
                 });
 
-                map.addChild(marker);
+                map.addChild(marker); // Добавляем маркер на карту
 
             } catch (error) {
                 console.error('Ошибка:', error);
