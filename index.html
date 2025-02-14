@@ -14,7 +14,8 @@
                     location: {
                         center: [32.045098, 54.782630],
                         zoom: 10
-                    }
+                    },
+                    behaviors: ['drag', 'scrollZoom', 'pinchZoom', 'dblClick']
                 });
                 map.addChild(new YMapDefaultSchemeLayer({ customization }));
         }
