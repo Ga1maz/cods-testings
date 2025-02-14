@@ -17,16 +17,21 @@
                     }
                 });
                 map.addChild(new YMapDefaultSchemeLayer({ customization }));
-                const content = document.createElement('section');
+            const markerElement = document.createElement('div');
+            markerElement.className = 'marker-class';
+            markerElement.innerText = "I'm marker!";
 
-                const marker = new YMapMarker(
-                  {
-                    coordinates: [25.229762, 55.289311],
-                    draggable: true
-                  },
-                  content
-                );
-                map.addChild(marker);
+            const marker = new YMapMarker(
+              {
+                source: 'markerSource',
+                coordinates: [37.588144, 55.733842],
+                draggable: true,
+                mapFollowsOnDrag: true
+              },
+              markerElement
+            );
+
+            map.addChild(marker);
         }
     </script>
 </head>
