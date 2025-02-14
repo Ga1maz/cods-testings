@@ -25,7 +25,7 @@
 
             ymaps3.import.registerCdn('https://cdn.jsdelivr.net/npm/{package}', '@yandex/ymaps3-default-ui-theme@0.0');
 
-            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeaturePolyline } = ymaps3;
+            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
             const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
 
             const map = new YMap(document.getElementById('map'), {
@@ -45,7 +45,7 @@
                         coordinates: point.coordinates,
                         title: point.title,
                         color: point.color,
-                        size: 'large'
+                        size: 'normal' // Исправлен размер
                     });
                     map.addChild(marker);
                 }, index * 1000);
@@ -67,32 +67,33 @@
                     ]
                 ];
 
-                map.addChild(new YMapFeaturePolyline({
-                    coordinates: animatedCoords,
-                    style: { strokeWidth: 4, strokeColor: 'yellow' }
+                map.addChild(new YMapFeature({
+                    geometry: { type: "LineString", coordinates: animatedCoords },
+                    style: { strokeWidth: 4, strokeColor: 'blue' }
                 }));
             }, 100);
 
-            // Вычисление расстояния
-            function getDistance(coord1, coord2) {
-                const R = 6371; // Радиус Земли в км
-                const toRad = (deg) => deg * (Math.PI / 180);
-                const dLat = toRad(coord2[1] - coord1[1]);
-                const dLon = toRad(coord2[0] - coord1[0]);
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                          Math.cos(toRad(coord1[1])) * Math.cos(toRad(coord2[1])) *
-                          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                return (R * c).toFixed(2);
-            }
+                            // Вычисление расстояния
+                            function getDistance(coord1, coord2) {
+                                const R = 6371; // Радиус Земли в км
+                                const toRad = (deg) => deg * (Math.PI / 180);
+                                const dLat = toRad(coord2[1] - coord1[1]);
+                                const dLon = toRad(coord2[0] - coord1[0]);
+                                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                                          Math.cos(toRad(coord1[1])) * Math.cos(toRad(coord2[1])) *
+                                          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                                return (R * c).toFixed(2);
+                            }
 
-            const distance = getDistance(points[0].coordinates, points[1].coordinates);
-            document.getElementById('distance').innerText = `Расстояние: ${distance} км`;
-        }
-    </script>
-</head>
-<body onload="initMap()">
-    <div id="map"></div>
-    <div id="distance" class="distance-info"></div>
-</body>
-</html>
+                            const distance = getDistance(points[0].coordinates, points[1].coordinates);
+                            document.getElementById('distance').innerText = `Расстояние: ${distance} км`;
+                        }
+                    </script>
+                </head>
+                <body onload="initMap()">
+                    <div id="map"></div>
+                    <div id="distance" class="distance-info"></div>
+                </body>
+                </html>
+                
