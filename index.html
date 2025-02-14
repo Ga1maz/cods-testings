@@ -15,27 +15,37 @@
             const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
 
             let customization = null;
-            const response = await fetch('customization.json');
+            try {
+                const response = await fetch('customization.json');
+                if (response.ok) {
+                    customization = await response.json();
+                } else {
+                    console.warn('Не удалось загрузить customization.json');
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки customization.json:', error);
+            }
 
             const map = new YMap(document.getElementById('map'), {
                 location: { center: [0, 0], zoom: 2 }
             });
-
             map.addChild(new YMapDefaultSchemeLayer(customization ? { customization } : {}));
             map.addChild(new YMapDefaultFeaturesLayer());
 
             const markers = [
                 {
-                    coordinates: [-60.3, -10.5],
-                    title: 'South America',
-                    subtitle: 'Has the longest mountain range',
-                    color: 'red'
+                    coordinates: [32.045098, 54.782630],
+                    title: 'Смоленск',
+                    subtitle: 'Координаты: 54.782630, 32.045098',
+                    color: 'red',
+                    iconName: 'fallback'
                 },
                 {
-                    coordinates: [88.5, 50.6],
-                    title: 'Asia',
-                    subtitle: 'Has the highest mountain',
-                    color: 'green'
+                    coordinates: [55.958722, 54.735152],
+                    title: 'Уфа',
+                    subtitle: 'Координаты: 54.735152, 55.958722',
+                    color: 'green',
+                    iconName: 'fallback'
                 }
             ];
 
@@ -46,7 +56,7 @@
                     subtitle: markerData.subtitle,
                     color: markerData.color,
                     size: 'normal',
-                    iconName: 'fallback'
+                    iconName: markerData.iconName
                 });
                 map.addChild(marker);
             });
