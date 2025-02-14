@@ -114,7 +114,7 @@
             const line = new YMapFeature({
                 geometry: { type: 'LineString', coordinates: markers.map(m => m.coordinates) },
                 style: {
-                    strokeColor: '#007BFF', // Ярко-синий цвет
+                    strokeColor: '#007BFF',
                     strokeWidth: 4,
                     strokeOpacity: 0.8
                 }
@@ -122,8 +122,7 @@
 
             map.addChild(line);
 
-            // Вычисляем расстояние между точками
-            const R = 6371; // Радиус Земли в км
+            const R = 6371;
             function toRad(deg) { return deg * Math.PI / 180; }
 
             const [lon1, lat1] = markers[0].coordinates;
@@ -135,31 +134,14 @@
                       Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
                       Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const distance = (R * c).toFixed(2); // Расстояние в км
+            const distance = (R * c).toFixed(2);
 
             document.getElementById('distance').innerText = `Расстояние между точками: ${distance} км`;
-        }
-
-        function zoomIn() {
-            ymaps3.ready.then(() => {
-                document.getElementById('map').firstChild.zoomIn();
-            });
-        }
-
-        function zoomOut() {
-            ymaps3.ready.then(() => {
-                document.getElementById('map').firstChild.zoomOut();
-            });
         }
     </script>
 </head>
 <body onload="initMap()">
     <div class="toolbar" id="distance">Загрузка...</div>
     <div id="map" style="width: 100vw; height: 100vh;"></div>
-
-    <div class="button-container">
-        <button class="btn" onclick="zoomIn()">Приблизить</button>
-        <button class="btn" onclick="zoomOut()">Отдалить</button>
-    </div>
 </body>
 </html>
