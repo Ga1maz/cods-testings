@@ -7,13 +7,9 @@
     <script>
         async function initMap() {
             await ymaps3.ready;
-            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
+            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapMarker } = ymaps3;
 
             try {
-                const response = await fetch('customization.json');
-                const customization = await response.json();
-
-                // Инициализация карты
                 const map = new YMap(document.getElementById('map'), {
                     location: {
                         center: [32.045098, 54.782630],
@@ -21,19 +17,14 @@
                     }
                 });
 
-                map.addChild(new YMapDefaultSchemeLayer({ customization }));
+                map.addChild(new YMapDefaultSchemeLayer());
                 map.addChild(new YMapDefaultFeaturesLayer());
 
-                // Добавление маркера
-                const marker = new YMapFeature({
-                    geometry: { type: 'Point', coordinates: [32.045098, 54.782630] },
-                    style: {
-                        shape: 'islands#circleIcon',
-                        fillColor: '#007bff',
-                        strokeColor: '#ffffff',
-                        strokeWidth: 2,
-                        size: 14
-                    }
+                // Добавляем маркер
+                const marker = new YMapMarker({
+                    coordinates: [32.045098, 54.782630],
+                    title: 'Мой маркер',
+                    subtitle: 'Тестовый маркер'
                 });
 
                 map.addChild(marker); // Добавляем маркер на карту
