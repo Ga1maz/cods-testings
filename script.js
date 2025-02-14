@@ -38,7 +38,6 @@ client.on("connect", () => {
     client.subscribe("battery/charge");
     client.subscribe("gps/coordinates");
     client.subscribe("gps/cord2");
-    client.subscribe("gps/cord3");
 });
 
 client.on('message', (topic, message) => {
