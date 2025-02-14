@@ -9,51 +9,33 @@
         async function initMap() {
             await ymaps3.ready;
 
-            // Подключаем дополнительные модули
             ymaps3.import.registerCdn('https://cdn.jsdelivr.net/npm/{package}', '@yandex/ymaps3-default-ui-theme@0.0');
 
             const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer } = ymaps3;
             const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
 
-            // Загружаем настройки кастомизации
             let customization = null;
-            try {
-                const response = await fetch('customization.json');
-                if (response.ok) {
-                    customization = await response.json();
-                } else {
-                    console.warn('Не удалось загрузить customization.json');
-                }
-            } catch (error) {
-                console.error('Ошибка загрузки customization.json:', error);
-            }
+            const response = await fetch('customization.json');
 
-            // Создаём карту
             const map = new YMap(document.getElementById('map'), {
                 location: { center: [0, 0], zoom: 2 }
             });
 
-            // Добавляем слои карты
             map.addChild(new YMapDefaultSchemeLayer(customization ? { customization } : {}));
-            map.addChild(new YMapDefaultFeaturesLayer()); // <-- ДОБАВЛЕН ФИКС!
+            map.addChild(new YMapDefaultFeaturesLayer());
 
-            // Добавляем метки
             const markers = [
                 {
                     coordinates: [-60.3, -10.5],
                     title: 'South America',
                     subtitle: 'Has the longest mountain range',
-                    color: 'red',
-                    size: 'normal',
-                    iconName: 'fallback'
+                    color: 'red'
                 },
                 {
                     coordinates: [88.5, 50.6],
                     title: 'Asia',
                     subtitle: 'Has the highest mountain',
-                    color: 'green',
-                    size: 'normal',
-                    iconName: 'fallback'
+                    color: 'green'
                 }
             ];
 
@@ -63,7 +45,8 @@
                     title: markerData.title,
                     subtitle: markerData.subtitle,
                     color: markerData.color,
-                    size: 'normal'
+                    size: 'normal',
+                    iconName: 'fallback'
                 });
                 map.addChild(marker);
             });
