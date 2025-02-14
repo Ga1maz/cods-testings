@@ -7,31 +7,16 @@
     <script>
         async function initMap() {
             await ymaps3.ready;
-            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapMarker } = ymaps3;
-
-            try {
+            const { YMap, YMapDefaultSchemeLayer} = ymaps3;
+                const response = await fetch('customization.json');
+                const customization = await response.json();
                 const map = new YMap(document.getElementById('map'), {
                     location: {
                         center: [32.045098, 54.782630],
                         zoom: 10
                     }
                 });
-
-                map.addChild(new YMapDefaultSchemeLayer());
-                map.addChild(new YMapDefaultFeaturesLayer());
-
-                // Добавляем маркер
-                const marker = new YMapMarker({
-                    coordinates: [32.045098, 54.782630],
-                    title: 'Мой маркер',
-                    subtitle: 'Тестовый маркер'
-                });
-
-                map.addChild(marker); // Добавляем маркер на карту
-
-            } catch (error) {
-                console.error('Ошибка:', error);
-            }
+                map.addChild(new YMapDefaultSchemeLayer({ customization }));
         }
     </script>
 </head>
