@@ -7,13 +7,13 @@
     <script>
         async function initMap() {
             await ymaps3.ready;
-            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
-            const { Point } = await ymaps3.import('@yandex/ymaps3-geometry-point'); // Импортируем Point правильно
+            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeatureLayer, YMapFeature } = ymaps3;
 
             try {
                 const response = await fetch('customization.json');
                 const customization = await response.json();
 
+                // Создаём карту
                 const map = new YMap(document.getElementById('map'), {
                     location: {
                         center: [32.045098, 54.782630],
@@ -24,18 +24,19 @@
                 map.addChild(new YMapDefaultSchemeLayer({ customization }));
                 map.addChild(new YMapDefaultFeaturesLayer());
 
-                // Создаём точку (маркер)
-                const marker = new YMapFeature({
-                    geometry: new Point([32.045098, 54.782630]),
-                    style: {
-                        fill: '#007bff', // Синий цвет точки
-                        stroke: '#ffffff', // Белая обводка
-                        strokeWidth: 2,
-                        size: 12 // Размер точки
-                    }
-                });
+                // Создаём слой для объектов (включая маркеры)
+                const featureLayer = new YMapFeatureLayer();
+                map.addChild(featureLayer);
 
-                map.addChild(marker);
+                // Добавляем точку на карту
+                featureLayer.addChild(new YMapFeature({
+                    geometry: { type: 'Point', coordinates: [32.045098, 54.782630] },
+                    style: {
+                        shape: 'pin',
+                        color: 'blue',
+                        size: 24
+                    }
+                }));
 
             } catch (error) {
                 console.error('Ошибка:', error);
