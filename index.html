@@ -5,17 +5,52 @@
     <title>Яндекс Карта v3</title>
     <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU"></script>
     <style>
-        html, body, #app { width: 100%; height: 100%; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
         .toolbar {
             position: absolute;
-            z-index: 1000;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 16px;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
             font-size: 18px;
-            text-align: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .button-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .btn {
+            background: #007BFF;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            background: #0056b3;
         }
     </style>
     <script>
@@ -79,8 +114,9 @@
             const line = new YMapFeature({
                 geometry: { type: 'LineString', coordinates: markers.map(m => m.coordinates) },
                 style: {
-                    strokeColor: '#0000FF', // Синий цвет
-                    strokeWidth: 4
+                    strokeColor: '#007BFF', // Ярко-синий цвет
+                    strokeWidth: 4,
+                    strokeOpacity: 0.8
                 }
             });
 
@@ -103,10 +139,27 @@
 
             document.getElementById('distance').innerText = `Расстояние между точками: ${distance} км`;
         }
+
+        function zoomIn() {
+            ymaps3.ready.then(() => {
+                document.getElementById('map').firstChild.zoomIn();
+            });
+        }
+
+        function zoomOut() {
+            ymaps3.ready.then(() => {
+                document.getElementById('map').firstChild.zoomOut();
+            });
+        }
     </script>
 </head>
 <body onload="initMap()">
     <div class="toolbar" id="distance">Загрузка...</div>
     <div id="map" style="width: 100vw; height: 100vh;"></div>
+
+    <div class="button-container">
+        <button class="btn" onclick="zoomIn()">Приблизить</button>
+        <button class="btn" onclick="zoomOut()">Отдалить</button>
+    </div>
 </body>
 </html>
