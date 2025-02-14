@@ -5,18 +5,17 @@
     <title>Яндекс Карта v3</title>
     <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU"></script>
     <style>
-        html, body, #map { width: 100%; height: 100%; margin: 0; padding: 0; }
-        .distance-info {
+        html, body, #app { width: 100%; height: 100%; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
+        .toolbar {
             position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-family: Arial, sans-serif;
             z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 16px;
+            font-size: 18px;
+            text-align: center;
         }
     </style>
     <script>
@@ -28,72 +27,86 @@
             const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
             const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
 
+            let customization = null;
+            try {
+                const response = await fetch('customization.json');
+                if (response.ok) {
+                    customization = await response.json();
+                } else {
+                    console.warn('Не удалось загрузить customization.json');
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки customization.json:', error);
+            }
+
             const map = new YMap(document.getElementById('map'), {
-                location: { center: [54.76, 32.05], zoom: 5 }
+                location: { center: [54.75, 54.75], zoom: 5 }
             });
-            map.addChild(new YMapDefaultSchemeLayer());
+
+            map.addChild(new YMapDefaultSchemeLayer(customization ? { customization } : {}));
             map.addChild(new YMapDefaultFeaturesLayer());
 
-            const points = [
-                { coordinates: [32.045098, 54.782630], title: 'Смоленск', color: 'red' },
-                { coordinates: [55.958722, 54.735152], title: 'Уфа', color: 'green' }
+            const markers = [
+                {
+                    coordinates: [32.045098, 54.782630],
+                    title: 'Смоленск',
+                    subtitle: '54.782630, 32.045098',
+                    color: 'red',
+                    iconName: 'fallback'
+                },
+                {
+                    coordinates: [55.958722, 54.735152],
+                    title: 'Уфа',
+                    subtitle: '54.735152, 55.958722',
+                    color: 'green',
+                    iconName: 'fallback'
+                }
             ];
 
-            points.forEach((point, index) => {
-                setTimeout(() => {
-                    const marker = new YMapDefaultMarker({
-                        coordinates: point.coordinates,
-                        title: point.title,
-                        color: point.color,
-                        size: 'normal' // Исправлен размер
-                    });
-                    map.addChild(marker);
-                }, index * 1000);
+            markers.forEach(markerData => {
+                const marker = new YMapDefaultMarker({
+                    coordinates: markerData.coordinates,
+                    title: markerData.title,
+                    subtitle: markerData.subtitle,
+                    color: markerData.color,
+                    size: 'normal',
+                    iconName: markerData.iconName
+                });
+                map.addChild(marker);
             });
 
-            // Анимация линии
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 0.02;
-                if (progress > 1) {
-                    clearInterval(interval);
+            // Линия между точками
+            const line = new YMapFeature({
+                geometry: { type: 'LineString', coordinates: markers.map(m => m.coordinates) },
+                style: {
+                    strokeColor: '#0000FF', // Синий цвет
+                    strokeWidth: 4
                 }
+            });
 
-                const animatedCoords = [
-                    points[0].coordinates,
-                    [
-                        points[0].coordinates[0] + (points[1].coordinates[0] - points[0].coordinates[0]) * progress,
-                        points[0].coordinates[1] + (points[1].coordinates[1] - points[0].coordinates[1]) * progress
-                    ]
-                ];
+            map.addChild(line);
 
-                map.addChild(new YMapFeature({
-                    geometry: { type: "LineString", coordinates: animatedCoords },
-                    style: { strokeWidth: 4, strokeColor: 'blue' }
-                }));
-            }, 100);
+            // Вычисляем расстояние между точками
+            const R = 6371; // Радиус Земли в км
+            function toRad(deg) { return deg * Math.PI / 180; }
 
-                            // Вычисление расстояния
-                            function getDistance(coord1, coord2) {
-                                const R = 6371; // Радиус Земли в км
-                                const toRad = (deg) => deg * (Math.PI / 180);
-                                const dLat = toRad(coord2[1] - coord1[1]);
-                                const dLon = toRad(coord2[0] - coord1[0]);
-                                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                                          Math.cos(toRad(coord1[1])) * Math.cos(toRad(coord2[1])) *
-                                          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                                return (R * c).toFixed(2);
-                            }
+            const [lon1, lat1] = markers[0].coordinates;
+            const [lon2, lat2] = markers[1].coordinates;
 
-                            const distance = getDistance(points[0].coordinates, points[1].coordinates);
-                            document.getElementById('distance').innerText = `Расстояние: ${distance} км`;
-                        }
-                    </script>
-                </head>
-                <body onload="initMap()">
-                    <div id="map"></div>
-                    <div id="distance" class="distance-info"></div>
-                </body>
-                </html>
-                
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const distance = (R * c).toFixed(2); // Расстояние в км
+
+            document.getElementById('distance').innerText = `Расстояние между точками: ${distance} км`;
+        }
+    </script>
+</head>
+<body onload="initMap()">
+    <div class="toolbar" id="distance">Загрузка...</div>
+    <div id="map" style="width: 100vw; height: 100vh;"></div>
+</body>
+</html>
