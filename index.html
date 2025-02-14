@@ -7,13 +7,13 @@
     <script>
         async function initMap() {
             await ymaps3.ready;
-            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeatureLayer, YMapFeature } = ymaps3;
+            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
 
             try {
                 const response = await fetch('customization.json');
                 const customization = await response.json();
 
-                // Создаём карту
+                // Инициализация карты
                 const map = new YMap(document.getElementById('map'), {
                     location: {
                         center: [32.045098, 54.782630],
@@ -24,19 +24,19 @@
                 map.addChild(new YMapDefaultSchemeLayer({ customization }));
                 map.addChild(new YMapDefaultFeaturesLayer());
 
-                // Создаём слой для объектов (включая маркеры)
-                const featureLayer = new YMapFeatureLayer();
-                map.addChild(featureLayer);
-
-                // Добавляем точку на карту
-                featureLayer.addChild(new YMapFeature({
+                // Добавление маркера
+                const marker = new YMapFeature({
                     geometry: { type: 'Point', coordinates: [32.045098, 54.782630] },
                     style: {
-                        shape: 'pin',
-                        color: 'blue',
-                        size: 24
+                        shape: 'islands#circleIcon',
+                        fillColor: '#007bff',
+                        strokeColor: '#ffffff',
+                        strokeWidth: 2,
+                        size: 14
                     }
-                }));
+                });
+
+                map.addChild(marker); // Добавляем маркер на карту
 
             } catch (error) {
                 console.error('Ошибка:', error);
