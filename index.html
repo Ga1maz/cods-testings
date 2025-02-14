@@ -14,10 +14,19 @@
                     location: {
                         center: [32.045098, 54.782630],
                         zoom: 10
-                    },
-                    behaviors: ['drag', 'scrollZoom', 'pinchZoom', 'dblClick']
+                    }
                 });
                 map.addChild(new YMapDefaultSchemeLayer({ customization }));
+                const content = document.createElement('section');
+
+                const marker = new YMapMarker(
+                  {
+                    coordinates: [25.229762, 55.289311],
+                    draggable: true
+                  },
+                  content
+                );
+                map.addChild(marker);
         }
     </script>
 </head>
