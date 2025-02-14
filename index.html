@@ -7,35 +7,38 @@
     <script>
         async function initMap() {
             await ymaps3.ready;
-            const { YMap, YMapDefaultSchemeLayer} = ymaps3;
-                const response = await fetch('customization.json');
-                const customization = await response.json();
-                const map = new YMap(document.getElementById('map'), {
-                    location: {
-                        center: [32.045098, 54.782630],
-                        zoom: 10
-                    }
+            ymaps3.import.registerCdn('https://cdn.jsdelivr.net/npm/{package}', '@yandex/ymaps3-default-ui-theme@0.0');
+
+            const { YMap, YMapDefaultSchemeLayer } = ymaps3;
+            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
+
+            const map = new YMap(document.getElementById('map'), {
+                location: { center: [0, 0], zoom: 2 }
+            });
+
+            map.addChild(new YMapDefaultSchemeLayer());
+
+            // Массив меток
+            const markers = [
+                { coordinates: [-60.3, -10.5], title: 'South America', subtitle: 'Has the longest mountain range', color: 'red' },
+                { coordinates: [88.5, 50.6], title: 'Asia', subtitle: 'Has the highest mountain', color: 'green' }
+            ];
+
+            // Добавление меток на карту
+            markers.forEach(markerData => {
+                const marker = new YMapDefaultMarker({
+                    coordinates: markerData.coordinates,
+                    title: markerData.title,
+                    subtitle: markerData.subtitle,
+                    color: markerData.color,
+                    size: 'normal'
                 });
-                map.addChild(new YMapDefaultSchemeLayer({ customization }));
-            const markerElement = document.createElement('div');
-            markerElement.className = 'marker-class';
-            markerElement.innerText = "I'm marker!";
-
-            const marker = new YMapMarker(
-              {
-                source: 'markerSource',
-                coordinates: [37.588144, 55.733842],
-                draggable: true,
-                mapFollowsOnDrag: true
-              },
-              markerElement
-            );
-
-            map.addChild(marker);
+                map.addChild(marker);
+            });
         }
     </script>
 </head>
 <body onload="initMap()">
-    <div id="map" style="width: 1500px; height: 800px;"></div>
+    <div id="map" style="width: 100vw; height: 100vh;"></div>
 </body>
 </html>
