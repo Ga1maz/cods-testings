@@ -7,8 +7,8 @@
     <script>
         async function initMap() {
             await ymaps3.ready;
-            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature, geometry } = ymaps3;
-            const { PointGeometry } = geometry; // Подключаем точечную геометрию
+            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
+            const { Point } = await ymaps3.import('@yandex/ymaps3-geometry-point'); // Импортируем Point правильно
 
             try {
                 const response = await fetch('customization.json');
@@ -24,26 +24,26 @@
                 map.addChild(new YMapDefaultSchemeLayer({ customization }));
                 map.addChild(new YMapDefaultFeaturesLayer());
 
-                // Создаём маркер
+                // Создаём точку (маркер)
                 const marker = new YMapFeature({
-                    geometry: new PointGeometry([32.045098, 54.782630]),
+                    geometry: new Point([32.045098, 54.782630]),
                     style: {
-                        fill: '#007bff', // Цвет точки (синий)
-                        stroke: '#ffffff', // Цвет обводки
+                        fill: '#007bff', // Синий цвет точки
+                        stroke: '#ffffff', // Белая обводка
                         strokeWidth: 2,
-                                    size: 12 // Размер точки
-                                }
-                            });
-
-                            map.addChild(marker);
-
-                        } catch (error) {
-                            console.error('Ошибка:', error);
-                        }
+                        size: 12 // Размер точки
                     }
-                </script>
-            </head>
-            <body onload="initMap()">
-                <div id="map" style="width: 1500px; height: 800px;"></div>
-            </body>
-            </html>            
+                });
+
+                map.addChild(marker);
+
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        }
+    </script>
+</head>
+<body onload="initMap()">
+    <div id="map" style="width: 1500px; height: 800px;"></div>
+</body>
+</html>
