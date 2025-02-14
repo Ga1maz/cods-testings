@@ -11,6 +11,7 @@
             const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme'); // Импортируем маркер
 
             try {
+                //кастом
                 const response = await fetch('customization.json');
                 const customization = await response.json();
 
@@ -20,6 +21,10 @@
                         zoom: 10
                     }
                 });
+
+
+                map.
+
 
                 map.addChild(new YMapDefaultSchemeLayer({ customization }));
                 map.addChild(new YMapDefaultFeaturesLayer());
