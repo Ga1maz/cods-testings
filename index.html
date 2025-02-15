@@ -109,8 +109,7 @@
                 });
                 map.addChild(marker);
             });
-
-            // Линия между точками
+            
             const line = new YMapFeature({
                 geometry: { type: 'LineString', coordinates: markers.map(m => m.coordinates) },
                 style: {
