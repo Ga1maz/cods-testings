@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>MQTT Яндекс Карты</title>
+    <title>Карта данных v3</title>
     <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU"></script>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
@@ -27,45 +27,19 @@
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
             z-index: 1000;
         }
-
-        .button-container {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 1000;
-        }
-
-        .btn {
-            background: #007BFF;
-            color: white;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.3s;
-            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:hover {
-            background: #0056b3;
-        }
     </style>
     <script>
-        let map;
-        let marker1, marker2;
-        let line;
+        let map, markers = {}, coordinates = {};
+        const client = mqtt.connect('wss://mqtt.cloa.su:8083/mqtt', {
+            username: 'ga1maz',
+            password: 'almazg1234'
+        });
 
         async function initMap() {
             await ymaps3.ready;
+            ymaps3.import.registerCdn('https://cdn.jsdelivr.net/npm', '@yandex/ymaps3-default-ui-theme@0.0');
 
-            ymaps3.import.registerCdn('https://cdn.jsdelivr.net/npm/{package}', '@yandex/ymaps3-default-ui-theme@0.0');
-
-            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
-            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
+            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapDefaultMarker } = ymaps3;
 
             map = new YMap(document.getElementById('map'), {
                 location: { center: [54.75, 54.75], zoom: 5 }
@@ -73,94 +47,68 @@
 
             map.addChild(new YMapDefaultSchemeLayer());
             map.addChild(new YMapDefaultFeaturesLayer());
+        }
 
-            marker1 = new YMapDefaultMarker({
-                coordinates: [32.045098, 54.782630],
-                title: 'Маркер 1',
-                subtitle: '54.782630, 32.045098',
+        function updateMap() {
+            if (!coordinates['gps/coordinates'] || !coordinates['cps/cord2']) return;
+
+            const [lon1, lat1] = coordinates['gps/coordinates'];
+            const [lon2, lat2] = coordinates['cps/cord2'];
+
+            // Удаление старых маркеров
+            Object.values(markers).forEach(marker => map.removeChild(marker));
+
+            // Добавляем новые маркеры
+            markers.point1 = new ymaps3.YMapDefaultMarker({
+                coordinates: [lon1, lat1],
+                title: 'Точка 1',
+                subtitle: `${lat1}, ${lon1}`,
                 color: 'red',
-                size: 'normal',
                 iconName: 'fallback'
             });
 
-            marker2 = new YMapDefaultMarker({
-                coordinates: [55.958722, 54.735152],
-                title: 'Маркер 2',
-                subtitle: '54.735152, 55.958722',
+            markers.point2 = new ymaps3.YMapDefaultMarker({
+                coordinates: [lon2, lat2],
+                title: 'Точка 2',
+                subtitle: `${lat2}, ${lon2}`,
                 color: 'green',
-                size: 'normal',
                 iconName: 'fallback'
             });
 
-            map.addChild(marker1);
-            map.addChild(marker2);
+            map.addChild(markers.point1);
+            map.addChild(markers.point2);
 
-            line = new YMapFeature({
-                geometry: { type: 'LineString', coordinates: [[32.045098, 54.782630], [55.958722, 54.735152]] },
-                style: {
-                    strokeColor: '#007BFF',
-                    strokeWidth: 4,
-                    strokeOpacity: 0.8
-                }
-            });
-
-            map.addChild(line);
-
-            connectToMQTT();
-        }
-
-        function connectToMQTT() {
-            const client = mqtt.connect('wss://mqtt.cloa.su:8080', {
-                username: 'ga1maz',
-                password: 'almazg1234'
-            });
-
-            client.on('connect', () => {
-                console.log('Connected to MQTT broker');
-                client.subscribe('gps/coordinates');
-                client.subscribe('cps/cord2');
-            });
-
-            client.on('message', (topic, message) => {
-                const coords = message.toString().split(',').map(Number);
-                const reversedCoords = [coords[1], coords[0]];
-
-                if (topic === 'gps/coordinates') {
-                    marker1.coordinates = reversedCoords;
-                } else if (topic === 'cps/cord2') {
-                    marker2.coordinates = reversedCoords;
-                }
-
-                updateLine();
-                updateDistance();
-            });
-        }
-
-        function updateLine() {
-            line.geometry.coordinates = [marker1.coordinates, marker2.coordinates];
-        }
-
-        function updateDistance() {
+            // Вычисление расстояния
             const R = 6371;
             function toRad(deg) { return deg * Math.PI / 180; }
 
-            const [lon1, lat1] = marker1.coordinates;
-            const [lon2, lat2] = marker2.coordinates;
-
             const dLat = toRad(lat2 - lat1);
             const dLon = toRad(lon2 - lon1);
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             const distance = (R * c).toFixed(2);
 
-            document.getElementById('distance').innerText = `Расстояние между точками: ${distance} км`;
+            document.getElementById('distance').innerText = `Расстояние: ${distance} км`;
         }
+
+        client.on('connect', () => {
+            console.log('MQTT connected');
+            client.subscribe('gps/coordinates');
+            client.subscribe('cps/cord2');
+        });
+
+        client.on('message', (topic, message) => {
+            const [lat, lon] = message.toString().split(',').map(Number);
+            if (!isNaN(lat) && !isNaN(lon)) {
+                coordinates[topic] = [lon, lat];
+                updateMap();
+            }
+        });
+
     </script>
 </head>
 <body onload="initMap()">
-    <div class="toolbar" id="distance">Расчет расстояния...</div>
-    <div id="map" style="width: 100vw; height: 100vh;"></div>
+    <div class="toolbar" id="distance">Ожидание данных...</div>
+    <div id="map"></div>
 </body>
 </html>
