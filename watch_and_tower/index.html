@@ -19,6 +19,7 @@
             font-size: 18px;
             font-weight: bold;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 1000;
         }
     </style>
 </head>
@@ -28,13 +29,16 @@
 
     <script>
         const brigadeCoords = [56.769429, 60.763348];
-        let trainMarker, line;
-        const map = L.map('map').setView(brigadeCoords, 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        let trainMarker, line, trainCoords = null;
 
-        const brigadeMarker = L.marker(brigadeCoords).addTo(map).bindPopup("Бригада");
-
-        const client = mqtt.connect("wss://mqtt.cloa.su:8080", {
+        const map = L.map('map', { zoomControl: false }).setView(brigadeCoords, 10);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+        
+        const brigadeMarker = L.marker(brigadeCoords).addTo(map).bindPopup("Бригада").openPopup();
+        
+        const client = mqtt.connect("wss://mqtt.cloa.su:8083", {
             username: "ga1maz",
             password: "almazg1234"
         });
@@ -47,7 +51,7 @@
         client.on("message", (topic, message) => {
             const data = message.toString().split(",");
             if (data.length === 2) {
-                const trainCoords = [parseFloat(data[0]), parseFloat(data[1])];
+                trainCoords = [parseFloat(data[0]), parseFloat(data[1])];
 
                 if (!trainMarker) {
                     trainMarker = L.marker(trainCoords).addTo(map).bindPopup("Поезд");
@@ -55,17 +59,20 @@
                     trainMarker.setLatLng(trainCoords);
                 }
 
-                if (line) {
-                    line.remove();
-                }
-                line = L.polyline([brigadeCoords, trainCoords], {color: 'blue'}).addTo(map);
-
+                if (line) line.remove();
+                line = L.polyline([brigadeCoords, trainCoords], { color: 'blue' }).addTo(map);
+                
                 const distance = map.distance(brigadeCoords, trainCoords).toFixed(2);
-                document.getElementById("distance").textContent = `Расстояние: ${distance} м`;
+                document.getElementById("distance").textContent = Расстояние: ${distance} м;
 
-                map.fitBounds([brigadeCoords, trainCoords], { padding: [50, 50] });
+                if (trainCoords) {
+                    map.fitBounds([brigadeCoords, trainCoords], { padding: [50, 50] });
+                }
             }
         });
+
+        // Ждём загрузки карты, чтобы правильно отрисовать
+        setTimeout(() => map.invalidateSize(), 500);
     </script>
 </body>
 </html>
