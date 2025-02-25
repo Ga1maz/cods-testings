@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GPS</title>
+    <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU"></script>
+</head>
+<body>
+    <div id="map" style="width: 600px; height: 400px"></div>
+</body>
+<script>
+    initMap();
+
+    async function initMap() {
+        // Промис `ymaps3.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
+        await ymaps3.ready;
+
+        const {YMap, YMapDefaultSchemeLayer} = ymaps3;
+
+        // Иницилиазируем карту
+        const map = new YMap(
+            // Передаём ссылку на HTMLElement контейнера
+            document.getElementById('map'),
+
+            // Передаём параметры инициализации карты
+            {
+                location: {
+                    // Координаты центра карты
+                    center: [37.588144, 55.733842],
+
+                    // Уровень масштабирования
+                    zoom: 10
+                }
+            }
+        );
+
+        // Добавляем слой для отображения схематической карты
+        map.addChild(new YMapDefaultSchemeLayer());
+    }
+
+</script>
+</html>
