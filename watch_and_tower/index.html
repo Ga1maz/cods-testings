@@ -65,6 +65,12 @@
             return R * c; // Расстояние в км
         }
 
+        // Функция для обновления границ карты
+        function updateMapBounds(trainCoords) {
+            const bounds = L.latLngBounds([brigadeCoords, trainCoords]);
+            map.fitBounds(bounds, { padding: [50, 50] }); // Добавляем отступы
+        }
+
         // Подключение к MQTT по WSS
         const client = new Paho.MQTT.Client("mqtt.cloa.su", 8080, "/mqtt", "clientId-" + Math.random().toString(16).substr(2, 8));
 
@@ -76,19 +82,24 @@
             const coords = message.payloadString.split(',');
             const lat = parseFloat(coords[0]);
             const lon = parseFloat(coords[1]);
+            const trainCoords = [lat, lon];
 
             if (trainMarker) {
-                trainMarker.setLatLng([lat, lon]);
+                trainMarker.setLatLng(trainCoords);
             } else {
-                trainMarker = L.marker([lat, lon]).addTo(map);
+                trainMarker = L.marker(trainCoords).addTo(map);
                 trainMarker.bindPopup("Поезд").openPopup();
             }
 
             if (polyline) {
                 map.removeLayer(polyline);
             }
-            polyline = L.polyline([brigadeCoords, [lat, lon]], {color: 'blue'}).addTo(map);
+            polyline = L.polyline([brigadeCoords, trainCoords], { color: 'blue' }).addTo(map);
 
+            // Обновляем границы карты
+            updateMapBounds(trainCoords);
+
+            // Обновляем расстояние
             const distance = calculateDistance(brigadeCoords[0], brigadeCoords[1], lat, lon);
             document.getElementById('distanceLabel').innerText = `Расстояние: ${distance.toFixed(2)} км`;
         };
@@ -96,7 +107,7 @@
         client.connect({
             onSuccess: () => {
                 console.log("Подключено к MQTT по WSS");
-                client.subscribe("gps/cord3", {qos: 0});
+                client.subscribe("gps/cord3", { qos: 0 });
             },
             userName: "ga1maz",
             password: "almazg1234",
