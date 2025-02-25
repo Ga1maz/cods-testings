@@ -65,8 +65,8 @@
             return R * c; // Расстояние в км
         }
 
-        // Подключение к MQTT
-        const client = new Paho.MQTT.Client("mqtt.cloa.su", 8080, "clientId-" + Math.random().toString(16).substr(2, 8));
+        // Подключение к MQTT по WSS
+        const client = new Paho.MQTT.Client("mqtt.cloa.su", 443, "/mqtt", "clientId-" + Math.random().toString(16).substr(2, 8));
 
         client.onConnectionLost = (responseObject) => {
             console.log("Соединение потеряно: " + responseObject.errorMessage);
@@ -95,11 +95,12 @@
 
         client.connect({
             onSuccess: () => {
-                console.log("Подключено к MQTT");
+                console.log("Подключено к MQTT по WSS");
                 client.subscribe("gps/cord3", {qos: 0});
             },
             userName: "ga1maz",
-            password: "almazg1234"
+            password: "almazg1234",
+            useSSL: true // Использовать SSL для WSS
         });
     </script>
 </body>
