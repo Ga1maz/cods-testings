@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Яндекс Карта v3</title>
     <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU"></script>
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
         html, body, #map {
             width: 100%;
@@ -89,6 +88,13 @@
                     subtitle: '54.782630, 32.045098',
                     color: 'red',
                     iconName: 'fallback'
+                },
+                {
+                    coordinates: [60.763348, 56.769429],
+                    title: 'Бригада',
+                    subtitle: '56.769429, 60.763348',
+                    color: 'green',
+                    iconName: 'fallback'
                 }
             ];
 
@@ -104,90 +110,32 @@
                 map.addChild(marker);
             });
 
-            let userMarker = null;
-            let line = null;
-
-            function updateUserMarker(coordinates) {
-                if (userMarker) {
-                    map.removeChild(userMarker);
-                }
-                if (line) {
-                    map.removeChild(line);
-                }
-
-                userMarker = new YMapDefaultMarker({
-                    coordinates: coordinates,
-                    title: 'Ваше местоположение',
-                    subtitle: `${coordinates[1]}, ${coordinates[0]}`,
-                    color: 'blue',
-                    size: 'normal',
-                    iconName: 'fallback'
-                });
-                map.addChild(userMarker);
-
-                line = new YMapFeature({
-                    geometry: { type: 'LineString', coordinates: [markers[0].coordinates, coordinates] },
-                    style: {
-                        strokeColor: '#007BFF',
-                        strokeWidth: 4,
-                        strokeOpacity: 0.8
-                    }
-                });
-
-                map.addChild(line);
-
-                const R = 6371;
-                function toRad(deg) { return deg * Math.PI / 180; }
-
-                const [lon1, lat1] = markers[0].coordinates;
-                const [lon2, lat2] = coordinates;
-
-                const dLat = toRad(lat2 - lat1);
-                const dLon = toRad(lon2 - lon1);
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                const distance = (R * c).toFixed(2);
-
-                document.getElementById('distance').innerText = `Расстояние между точками: ${distance} км`;
-            }
-
-            // MQTT клиент
-            const client = mqtt.connect('wss://mqtt.cloa.su', {
-                username: 'ga1maz',
-                password: 'almazg1234'
-            });
-
-            client.on('connect', () => {
-                console.log('Connected to MQTT broker');
-                client.subscribe('gps/coordinates', (err) => {
-                    if (!err) {
-                        console.log('Subscribed to gps/coordinates');
-                    }
-                });
-            });
-
-            client.on('message', (topic, message) => {
-                if (topic === 'gps/coordinates') {
-                    const coordinates = JSON.parse(message.toString());
-                    updateUserMarker([coordinates.lon, coordinates.lat]);
+            const line = new YMapFeature({
+                geometry: { type: 'LineString', coordinates: markers.map(m => m.coordinates) },
+                style: {
+                    strokeColor: '#007BFF',
+                    strokeWidth: 4,
+                    strokeOpacity: 0.8
                 }
             });
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const userCoordinates = [position.coords.longitude, position.coords.latitude];
-                        updateUserMarker(userCoordinates);
-                    },
-                    (error) => {
-                        console.error('Ошибка получения геолокации:', error);
-                    }
-                );
-            } else {
-                console.error('Геолокация не поддерживается вашим браузером');
-            }
+            map.addChild(line);
+
+            const R = 6371;
+            function toRad(deg) { return deg * Math.PI / 180; }
+
+            const [lon1, lat1] = markers[0].coordinates;
+            const [lon2, lat2] = markers[1].coordinates;
+
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const distance = (R * c).toFixed(2);
+
+            document.getElementById('distance').innerText = `Расстояние между точками: ${distance} км`;
         }
     </script>
 </head>
