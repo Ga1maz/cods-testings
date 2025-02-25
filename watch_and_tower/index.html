@@ -3,80 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Карта с MQTT</title>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <title>Карта с поездом и бригадой</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
-        html, body { height: 100%; margin: 0; }
-        #map { width: 100vw; height: 100vh; }
-        .distance-box {
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 100%;
+        }
+        .distance-label {
             position: absolute;
-            top: 10px; left: 50%;
+            top: 10px;
+            left: 50%;
             transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
+            font-size: 16px;
+            color: #333;
         }
     </style>
 </head>
 <body>
     <div id="map"></div>
-    <div id="distance" class="distance-box">Расстояние: -- м</div>
+    <div class="distance-label" id="distanceLabel">Расстояние: </div>
 
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const brigadeCoords = [56.769429, 60.763348];
-            let trainMarker, line, trainCoords = null;
+        // Инициализация карты
+        const map = L.map('map').setView([56.769429, 60.763348], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-            const map = L.map('map').setView(brigadeCoords, 10);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 18,
-            }).addTo(map);
+        // Статическая точка бригады
+        const brigadeCoords = [56.769429, 60.763348];
+        const brigadeMarker = L.marker(brigadeCoords).addTo(map);
+        brigadeMarker.bindPopup("Бригада").openPopup();
 
-            const brigadeMarker = L.marker(brigadeCoords).addTo(map).bindPopup("Бригада").openPopup();
+        // Переменные для хранения координат поезда и линии
+        let trainMarker = null;
+        let polyline = null;
 
-            const client = mqtt.connect("wss://mqtt.cloa.su:8083", {
-                username: "ga1maz",
-                password: "almazg1234"
-            });
+        // Функция для расчета расстояния между двумя точками
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Радиус Земли в км
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Расстояние в км
+        }
 
-            client.on("connect", () => {
+        // Подключение к MQTT
+        const client = new Paho.MQTT.Client("mqtt.cloa.su", 8080, "clientId-" + Math.random().toString(16).substr(2, 8));
+
+        client.onConnectionLost = (responseObject) => {
+            console.log("Соединение потеряно: " + responseObject.errorMessage);
+        };
+
+        client.onMessageArrived = (message) => {
+            const coords = message.payloadString.split(',');
+            const lat = parseFloat(coords[0]);
+            const lon = parseFloat(coords[1]);
+
+            if (trainMarker) {
+                trainMarker.setLatLng([lat, lon]);
+            } else {
+                trainMarker = L.marker([lat, lon]).addTo(map);
+                trainMarker.bindPopup("Поезд").openPopup();
+            }
+
+            if (polyline) {
+                map.removeLayer(polyline);
+            }
+            polyline = L.polyline([brigadeCoords, [lat, lon]], {color: 'blue'}).addTo(map);
+
+            const distance = calculateDistance(brigadeCoords[0], brigadeCoords[1], lat, lon);
+            document.getElementById('distanceLabel').innerText = `Расстояние: ${distance.toFixed(2)} км`;
+        };
+
+        client.connect({
+            onSuccess: () => {
                 console.log("Подключено к MQTT");
-                client.subscribe("gps/cord3");
-            });
-
-            client.on("message", (topic, message) => {
-                const data = message.toString().split(",");
-                if (data.length === 2) {
-                    const lat = parseFloat(data[0]);
-                    const lon = parseFloat(data[1]);
-
-                    if (!isNaN(lat) && !isNaN(lon)) {
-                        trainCoords = [lat, lon];
-
-                        if (!trainMarker) {
-                            trainMarker = L.marker(trainCoords).addTo(map).bindPopup("Поезд");
-                        } else {
-                            trainMarker.setLatLng(trainCoords);
-                        }
-
-                        if (line) line.remove();
-                        line = L.polyline([brigadeCoords, trainCoords], { color: 'blue' }).addTo(map);
-
-                        const distance = (map.distance(brigadeCoords, trainCoords) / 1000).toFixed(2);
-                        document.getElementById("distance").textContent = `Расстояние: ${distance} км`;
-
-                        map.fitBounds([brigadeCoords, trainCoords], { padding: [50, 50] });
-                    }
-                }
-            });
-
-            setTimeout(() => map.invalidateSize(), 500);
+                client.subscribe("gps/cord3", {qos: 0});
+            },
+            userName: "ga1maz",
+            password: "almazg1234"
         });
     </script>
 </body>
