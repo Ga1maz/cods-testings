@@ -66,7 +66,7 @@
         }
 
         // Подключение к MQTT по WSS
-        const client = new Paho.MQTT.Client("mqtt.cloa.su", 443, "/mqtt", "clientId-" + Math.random().toString(16).substr(2, 8));
+        const client = new Paho.MQTT.Client("mqtt.cloa.su", 8080, "/mqtt", "clientId-" + Math.random().toString(16).substr(2, 8));
 
         client.onConnectionLost = (responseObject) => {
             console.log("Соединение потеряно: " + responseObject.errorMessage);
