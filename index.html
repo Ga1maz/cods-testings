@@ -10293,7 +10293,7 @@
 map.addChild(layer);
 
 // Функция для получения текущего местоположения
-function getLocation() {
+                            function getLocation() {
                                 if (navigator.geolocation) {
                                     navigator.geolocation.getCurrentPosition(
                                         (position) => {
@@ -10426,8 +10426,28 @@ function getLocation() {
                             <div class="framer-m44qu4" data-framer-name="3.20"
                                 style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
-                                <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:&quot;Anta&quot;, &quot;Anta Placeholder&quot;, sans-serif;--framer-font-size:32px;--framer-letter-spacing:0.08em;--framer-text-alignment:center"
-                                    class="framer-text">07.01</p>
+                                <p id="random-value" style="
+    font-family: 'Anta', sans-serif;
+    font-size: 32px;
+    letter-spacing: 0.08em;
+    text-align: center;">
+    07.00
+</p>
+
+<script>
+    function getRandomValue(min, max) {
+        // Генерация случайного числа от min до max с двумя знаками после запятой
+        return (Math.random() * (max - min) + min).toFixed(2);
+    }
+
+    function updateValue() {
+        const element = document.getElementById('random-value');
+        const newValue = getRandomValue(7.00, 10.69); // Случайное значение от 7.00 до 10.69
+        element.textContent = newValue;
+    }
+
+    setInterval(updateValue, 1200); // Обновление каждую секунду
+</script>
                             </div>
                             <div class="framer-ciqiqz" data-border="true" data-framer-name="Rectangle 51"></div>
                         </div>
@@ -10444,9 +10464,23 @@ function getLocation() {
                             <div class="framer-16xpr9p" data-framer-name="3.20"
                                 style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
-                                <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:&quot;Anta&quot;, &quot;Anta Placeholder&quot;, sans-serif;--framer-font-size:32px;--framer-letter-spacing:0.08em;--framer-text-alignment:center"
+                                <p id="random-value1"  style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:&quot;Anta&quot;, &quot;Anta Placeholder&quot;, sans-serif;--framer-font-size:32px;--framer-letter-spacing:0.08em;--framer-text-alignment:center"
                                     class="framer-text">07.00</p>
                             </div>
+                            <script>
+                                function getRandomValue(min, max) {
+                                    // Генерация случайного числа от min до max с двумя знаками после запятой
+                                    return (Math.random() * (max - min) + min).toFixed(2);
+                                }
+                            
+                                function updateValue() {
+                                    const element = document.getElementById('random-value1');
+                                    const newValue = getRandomValue(7.00, 8.69); // Случайное значение от 7.00 до 10.69
+                                    element.textContent = newValue;
+                                }
+                            
+                                setInterval(updateValue, 1000); // Обновление каждую секунду
+                            </script>
                             <div class="framer-99gj2y" data-border="true" data-framer-name="Rectangle 51"></div>
                         </div>
                         <div class="framer-100j1h8" data-framer-name="Group 29">
