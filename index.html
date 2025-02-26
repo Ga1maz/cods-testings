@@ -3404,30 +3404,57 @@
                     </div>
                     <script>
                         initMap();
-
-async function initMap() {
-    // Промис `ymaps3.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
-    await ymaps3.ready;
-
-    const {YMap, YMapDefaultSchemeLayer} = ymaps3;
-
-    // Иницилиазируем карту
-    const map = new YMap(
-        // Передаём ссылку на HTMLElement контейнера
-        document.getElementById('map'),
-
-        // Передаём параметры инициализации карты
-        {
-            location: {
-                // Координаты центра карты
-                center: [37.588144, 55.733842],
-
-                // Уровень масштабирования
-                zoom: 10
-            }
-        }
-    );
-
+                    
+                        async function initMap() {
+                            // Промис `ymaps3.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
+                            await ymaps3.ready;
+                    
+                            const {YMap, YMapDefaultSchemeLayer} = ymaps3;
+                    
+                            // Иницилиазируем карту
+                            const map = new YMap(
+                                // Передаём ссылку на HTMLElement контейнера
+                                document.getElementById('map'),
+                    
+                                // Передаём параметры инициализации карты
+                                {
+                                    location: {
+                                        // Координаты центра карты (по умолчанию)
+                                        center: [37.588144, 55.733842],
+                    
+                                        // Уровень масштабирования
+                                        zoom: 10
+                                    }
+                                }
+                            );
+                    
+                            // Добавляем слой для отображения схематической карты
+                            const layer = new YMapDefaultSchemeLayer();
+                            map.addChild(layer);
+                    
+                            // Функция для получения текущего местоположения
+                            function getLocation() {
+                                if (navigator.geolocation) {
+                                    navigator.geolocation.getCurrentPosition(
+                                        (position) => {
+                                            const { latitude, longitude } = position.coords;
+                                            // Обновляем центр карты на текущее местоположение
+                                            map.setLocation({
+                                                center: [longitude, latitude],
+                                                zoom: 14 // Увеличиваем масштаб для более детального отображения
+                                            });
+                                        },
+                                        (error) => {
+                                            console.error("Ошибка при получении местоположения: ", error);
+                                        }
+                                    );
+                                } else {
+                                    console.error("Geolocation не поддерживается вашим браузером");
+                                }
+                            }
+                    
+                            // Вызываем функцию для получения текущего местоположения
+                            getLocation();
     // Добавляем слой для отображения схематической карты
     const layer = new YMapDefaultSchemeLayer({
   customization: [
@@ -10398,12 +10425,13 @@ map.addChild(layer);
                             <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:&quot;Anta&quot;, &quot;Anta Placeholder&quot;, sans-serif;--framer-font-size:20px;--framer-letter-spacing:0.08em"
                                 class="framer-text">Мощность (mW):</p>
                         </div>
+                        //p = v*
                         <div class="framer-nni8aa" data-framer-name="Group 26">
                             <div class="framer-m44qu4" data-framer-name="3.20"
                                 style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
                                 <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:&quot;Anta&quot;, &quot;Anta Placeholder&quot;, sans-serif;--framer-font-size:32px;--framer-letter-spacing:0.08em;--framer-text-alignment:center"
-                                    class="framer-text">03.20</p>
+                                    class="framer-text">07.01</p>
                             </div>
                             <div class="framer-ciqiqz" data-border="true" data-framer-name="Rectangle 51"></div>
                         </div>
@@ -10412,7 +10440,7 @@ map.addChild(layer);
                                 style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
                                 <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:&quot;Anta&quot;, &quot;Anta Placeholder&quot;, sans-serif;--framer-font-size:32px;--framer-letter-spacing:0.08em;--framer-text-alignment:center"
-                                    class="framer-text">21.50</p>
+                                    class="framer-text">00.02</p>
                             </div>
                             <div class="framer-1uk7xjb" data-border="true" data-framer-name="Rectangle 51"></div>
                         </div>
@@ -10421,7 +10449,7 @@ map.addChild(layer);
                                 style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
                                 <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:&quot;Anta&quot;, &quot;Anta Placeholder&quot;, sans-serif;--framer-font-size:32px;--framer-letter-spacing:0.08em;--framer-text-alignment:center"
-                                    class="framer-text">03.20</p>
+                                    class="framer-text">07.00</p>
                             </div>
                             <div class="framer-99gj2y" data-border="true" data-framer-name="Rectangle 51"></div>
                         </div>
