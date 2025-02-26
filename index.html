@@ -3427,34 +3427,6 @@
                                     }
                                 }
                             );
-                    
-                            // Добавляем слой для отображения схематической карты
-                            const layer = new YMapDefaultSchemeLayer();
-                            map.addChild(layer);
-                    
-                            // Функция для получения текущего местоположения
-                            function getLocation() {
-                                if (navigator.geolocation) {
-                                    navigator.geolocation.getCurrentPosition(
-                                        (position) => {
-                                            const { latitude, longitude } = position.coords;
-                                            // Обновляем центр карты на текущее местоположение
-                                            map.setLocation({
-                                                center: [longitude, latitude],
-                                                zoom: 14 // Увеличиваем масштаб для более детального отображения
-                                            });
-                                        },
-                                        (error) => {
-                                            console.error("Ошибка при получении местоположения: ", error);
-                                        }
-                                    );
-                                } else {
-                                    console.error("Geolocation не поддерживается вашим браузером");
-                                }
-                            }
-                    
-                            // Вызываем функцию для получения текущего местоположения
-                            getLocation();
     // Добавляем слой для отображения схематической карты
     const layer = new YMapDefaultSchemeLayer({
   customization: [
@@ -10319,6 +10291,30 @@
 ]
 });
 map.addChild(layer);
+
+// Функция для получения текущего местоположения
+function getLocation() {
+                                if (navigator.geolocation) {
+                                    navigator.geolocation.getCurrentPosition(
+                                        (position) => {
+                                            const { latitude, longitude } = position.coords;
+                                            // Обновляем центр карты на текущее местоположение
+                                            map.setLocation({
+                                                center: [longitude, latitude],
+                                                zoom: 14 // Увеличиваем масштаб для более детального отображения
+                                            });
+                                        },
+                                        (error) => {
+                                            console.error("Ошибка при получении местоположения: ", error);
+                                        }
+                                    );
+                                } else {
+                                    console.error("Geolocation не поддерживается вашим браузером");
+                                }
+                            }
+                    
+                            // Вызываем функцию для получения текущего местоположения
+                            getLocation();
 }
 
                     </script>
