@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Общий график</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script> <!-- Используем версию 2.9.4 -->
+</head>
+<body>
+  <div>
+    <!-- Устанавливаем увеличенные размеры canvas -->
+    <canvas id="combinedChart" width="1000" height="600"></canvas>
+  </div>
+
+  <script>
+    // Создание графика для всех данных (заряд аккумулятора, напряжение, нагрузка)
+    const ctx = document.getElementById('combinedChart').getContext('2d');
+    const combinedChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [], // Время
+        datasets: [
+          {
+            label: 'Заряд аккумулятора (%)',
+            data: [],
+            borderColor: 'rgba(75, 192, 192, 1)',
+            fill: false
+          },
+          {
+            label: 'Напряжение (V)',
+            data: [],
+            borderColor: 'rgba(255, 99, 132, 1)',
+            fill: false
+          },
+          {
+            label: 'Нагрузка',
+            data: [],
+            borderColor: 'rgba(153, 102, 255, 1)',
+            fill: false
+          }
+        ]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+
+    // Функция для обновления значений на графике
+    function updateChart() {
+      const batteryPercentage = parseInt(document.getElementById('percentage').textContent);
+      const voltageValue = parseFloat(document.getElementById('random-value').textContent);
+      const loadValue = parseFloat(document.getElementById('random-value1').textContent);
+
+      // Добавляем новые данные в график
+      combinedChart.data.labels.push(new Date().toLocaleTimeString()); // Добавляем текущее время
+      combinedChart.data.datasets[0].data.push(batteryPercentage); // Заряд аккумулятора
+      combinedChart.data.datasets[1].data.push(voltageValue); // Напряжение
+      combinedChart.data.datasets[2].data.push(loadValue); // Нагрузка
+
+      // Ограничиваем количество точек на графике
+      if (combinedChart.data.labels.length > 30) {
+        combinedChart.data.labels.shift();
+        combinedChart.data.datasets[0].data.shift();
+        combinedChart.data.datasets[1].data.shift();
+        combinedChart.data.datasets[2].data.shift();
+      }
+
+      combinedChart.update();
+    }
+
+    // Обновляем график каждую секунду
+    setInterval(updateChart, 2000);
+  </script>
+
+  <script>
+    // Функция для уменьшения значения заряда аккумулятора
+    function decreasePercentage() {
+      const percentageElement = document.getElementById('percentage');
+      let currentValue = parseInt(percentageElement.textContent);
+      if (currentValue > 0) {
+        currentValue -= 1;
+        percentageElement.textContent = currentValue + '%';
+      }
+    }
+
+    // Генерация случайного интервала между 2 и 3 минутами
+    function getRandomInterval() {
+      const min = 2 * 60 * 1000;
+      const max = 3 * 60 * 1000;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    // Устанавливаем интервал для уменьшения заряда аккумулятора
+    setInterval(decreasePercentage, getRandomInterval());
+  </script>
+
+  <script>
+    // Генерация случайного значения для напряжения
+    function getRandomValue(min, max) {
+      return (Math.random() * (max - min) + min).toFixed(2);
+    }
+
+    function updateVoltageValue() {
+      const element = document.getElementById('random-value');
+      const newValue = getRandomValue(7.00, 10.69);
+      element.textContent = newValue;
+    }
+
+    // Генерация случайного значения для нагрузки
+    function updateLoadValue() {
+      const element = document.getElementById('random-value1');
+      const newValue = getRandomValue(7.00, 8.69);
+      element.textContent = newValue;
+    }
+
+    setInterval(updateVoltageValue, 2000);
+    setInterval(updateLoadValue, 2000);
+  </script>
+
+  <span id="percentage">100%</span>
+  <span id="random-value">7.00</span>
+  <span id="random-value1">7.00</span>
+</body>
+</html>
