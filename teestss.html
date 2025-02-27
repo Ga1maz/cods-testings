@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Яндекс Карта v3</title>
+    <title>?????? ????? v3</title>
         <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU"></script>
     <style>
         html, body {
@@ -68,11 +68,12 @@
                 if (response.ok) {
                     customization = await response.json();
                 } else {
-                    console.warn('Не удалось загрузить customization.json');
+                    console.warn('?? ??????? ????????? customization.json');
                 }
             } catch (error) {
-                console.error('Ошибка загрузки customization.json:', error);
+                console.error('?????? ???????? customization.json:', error);
             }
+
             const map = new YMap(document.getElementById('map'), {
                 location: { center: [54.75, 54.75], zoom: 5 }
             });
@@ -83,21 +84,21 @@
             const markers = [
                 {
                     coordinates: [60.759863, 56.769637],
-                    title: 'Поезд',
+                    title: '?????',
                     subtitle: '56.769637, 60.759863',
                     color: 'red',
                     iconName: 'fallback'
                 },
                 {
                     coordinates: [60.757402, 56.770130],
-                    title: 'Бригада',
+                    title: '???????',
                     subtitle: '56.770130, 60.757402',
                     color: 'green',
                     iconName: 'fallback'
                 }
             ];
 
-            markers.forEach(markerData => {
+            const markerObjects = markers.map(markerData => {
                 const marker = new YMapDefaultMarker({
                     coordinates: markerData.coordinates,
                     title: markerData.title,
@@ -107,9 +108,10 @@
                     iconName: markerData.iconName
                 });
                 map.addChild(marker);
+                return marker;
             });
 
-            // Линия между точками
+            // ????? ????? ???????
             const line = new YMapFeature({
                 geometry: { type: 'LineString', coordinates: markers.map(m => m.coordinates) },
                 style: {
@@ -135,7 +137,11 @@
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             const distance = (R * c).toFixed(2);
 
-            document.getElementById('distance').innerText = `Расстояние между точками: ${distance} км`;
+            document.getElementById('distance').innerText = `?????????? ????? ???????: ${distance} ??`;
+
+            // ?????????????? ??? ?? ????????
+            const bounds = markerObjects.map(marker => marker.getBounds());
+            map.setBounds(bounds);
         }
     </script>
 </head>
