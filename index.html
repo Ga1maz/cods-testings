@@ -3428,7 +3428,7 @@
                     </div>
                     <script>
                         async function initMap() {
-                            // ?????????? ?????????? API
+                            // ???????? API ?????? ????
                             await ymaps3.ready;
 
                             // ???????? ?????
@@ -3456,21 +3456,22 @@
                             // ???????
                             const markers = [
                                 {
-                                    coordinates: [56.770130, 60.757402], // ?????
-                                    title: '?????',
+                                    coordinates: [56.770130, 60.757402], // ????? 1
+                                    title: '????? 1',
                                     subtitle: '56.770130, 60.757402',
                                     color: 'red',
                                     iconName: 'flag'
                                 },
                                 {
-                                    coordinates: [56.769637, 60.759863], // ???????
-                                    title: '???????',
+                                    coordinates: [56.769637, 60.759863], // ????? 2
+                                    title: '????? 2',
                                     subtitle: '56.769637, 60.759863',
                                     color: 'green',
                                     iconName: 'work'
                                 }
                             ];
 
+                            // ?????????? ???????? ?? ?????
                             markers.forEach(markerData => {
                                 const marker = new ymaps3.YMapMarker({
                                     coordinates: markerData.coordinates,
@@ -3481,12 +3482,27 @@
                                 });
                                 map.addChild(marker);
                             });
+
+                            // ???????? ????? ????? ???????
+                            const line = new ymaps3.YMapFeature({
+                                geometry: {
+                                    type: 'LineString',
+                                    coordinates: [
+                                        [56.770130, 60.757402], // ?????????? ?????? ?????
+                                        [56.769637, 60.759863]  // ?????????? ?????? ?????
+                                    ]
+                                },
+                                style: {
+                                    stroke: [{ color: '#0000FF', width: 2 }] // ????? ?????
+                                }
+                            });
+
+                            // ?????????? ????? ?? ?????
+                            map.addChild(line);
                         }
 
                         initMap();
-
-
-                                          </script>
+                    </script>
 
                                             <div class="framer-m9szm8" data-framer-name="image 3">
                                                 <div style="position:absolute;border-radius:inherit;top:0;right:0;bottom:0;left:0"
