@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Слайдеры управления</title>
+</head>
+<style>
+    body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.slider-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+.slider-item {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+input[type="range"] {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+  transition: background 0.3s ease;
+}
+
+input[type="range"]:focus {
+  background: #ccc;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #4caf50;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #4caf50;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+span {
+  font-weight: bold;
+  color: #333;
+  margin-left: 10px;
+}
+</style>
+<body>
+  <div class="slider-container">
+    <div class="slider-item">
+      <label for="volume">Громкость</label>
+      <input type="range" id="volume" min="0" max="100" value="50">
+      <span id="volumeValue">50</span>%
+    </div>
+    
+    <div class="slider-item">
+      <label for="brightness">Яркость</label>
+      <input type="range" id="brightness" min="0" max="100" value="70">
+      <span id="brightnessValue">70</span>%
+    </div>
+
+    <div class="slider-item">
+      <label for="warningTime">Время предупреждения</label>
+      <div>
+        <input type="range" id="warningTimeMin" min="0" max="60" value="10">
+        <span id="warningTimeMinValue">10</span> мин
+      </div>
+      <div>
+        <input type="range" id="warningTimeMax" min="0" max="60" value="30">
+        <span id="warningTimeMaxValue">30</span> мин
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const volumeSlider = document.getElementById('volume');
+const volumeValue = document.getElementById('volumeValue');
+
+volumeSlider.addEventListener('input', () => {
+  volumeValue.textContent = volumeSlider.value;
+});
+
+const brightnessSlider = document.getElementById('brightness');
+const brightnessValue = document.getElementById('brightnessValue');
+
+brightnessSlider.addEventListener('input', () => {
+  brightnessValue.textContent = brightnessSlider.value;
+});
+
+const warningTimeMinSlider = document.getElementById('warningTimeMin');
+const warningTimeMinValue = document.getElementById('warningTimeMinValue');
+
+warningTimeMinSlider.addEventListener('input', () => {
+  warningTimeMinValue.textContent = warningTimeMinSlider.value;
+});
+
+const warningTimeMaxSlider = document.getElementById('warningTimeMax');
+const warningTimeMaxValue = document.getElementById('warningTimeMaxValue');
+
+warningTimeMaxSlider.addEventListener('input', () => {
+  warningTimeMaxValue.textContent = warningTimeMaxSlider.value;
+});
+
+  </script>
+</body>
+</html>
