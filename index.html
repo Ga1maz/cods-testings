@@ -3471,10 +3471,12 @@
                             ];
 
                             markers.forEach(markerData => {
-                                const marker = ymaps3.create('Marker', markerData.coordinates, {
+                                const marker = new ymaps3.YMapDefaultMarker({
+                                    coordinates: markerData.coordinates,
                                     title: markerData.title,
                                     subtitle: markerData.subtitle,
-                                    iconContent: markerData.iconName // ????????? ???????? ???????
+                                    color: markerData.color,
+                                    iconName: markerData.iconName
                                 });
                                 map.addChild(marker);
                             });
