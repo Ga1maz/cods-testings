@@ -2161,7 +2161,7 @@
 
         .framer-YV5gm .framer-izgnpg {
             --border-bottom-width: 1px;
-            --border-color: #933334;
+            --border-color: rgb(156, 214, 98);
             --border-left-width: 1px;
             --border-right-width: 1px;
             --border-style: solid;
@@ -3197,7 +3197,7 @@
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                             data-framer-component-type="RichTextContainer">
                             <p style="--font-selector:R0Y7QXNhcC02MDA=;--framer-font-family:&quot;Asap&quot;, &quot;Asap Placeholder&quot;, sans-serif;--framer-font-weight:600;--framer-letter-spacing:0.08em"
-                                class="framer-text"> [54.753510, 32.058214]</p>
+                                class="framer-text"> [56.769637, 60.759863]</p>
                         </div>
                         <div data-framer-component-type="SVG" data-framer-name="Arrow 1"
                             style="image-rendering:pixelated;flex-shrink:0;fill:rgba(0,0,0,1);color:rgba(0,0,0,1)"
@@ -10349,48 +10349,73 @@ map.addChild(layer);
                     </div>
                     <script src="https://cdn.jsdelivr.net/npm/mqtt/dist/mqtt.min.js"></script>
 <script>
-  // Подключение к MQTT
-  const client = mqtt.connect('wss://mqtt.cloa.su:8080', {
-    username: 'ga1maz',
-    password: 'almazg1234'
-  });
+    async function initMap() {
+        await ymaps3.ready;
 
-  // Изначальные координаты
-  const initialCoords = { lat: 54.753510, lon: 32.058214 };
-  const targetCoords = { lat: 56.770130, lon: 60.757402 };
+        ymaps3.import.registerCdn('https://cdn.jsdelivr.net/npm/{package}', '@yandex/ymaps3-default-ui-theme@0.0');
 
-  // Функция для вычисления расстояния между двумя точками по формуле Хаверсина
-  function calculateDistance(lat1, lon1, lat2, lon2) {
-    const toRad = (deg) => deg * (Math.PI / 180);
-    const R = 6371; // Радиус Земли в километрах
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-              Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Расстояние в километрах
-  }
+        const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
+        const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
 
-  // Обработчик подключения
-  client.on('connect', () => {
-    console.log('Connected to MQTT server');
-    // Подписка на топик gps/cord3
-    client.subscribe('gps/cord3');
-  });
+        let customization = null;
+        try {
+            const response = await fetch('customization.json');
+            if (response.ok) {
+                customization = await response.json();
+            } else {
+                console.warn('Не удалось загрузить customization.json');
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки customization.json:', error);
+        }
+        const map = new YMap(document.getElementById('map'), {
+            location: { center: [54.75, 54.75], zoom: 5 }
+        });
 
-  // Обработчик получения данных
-  client.on('message', (topic, message) => {
-    if (topic === 'gps/cord3') {
-      // Преобразуем сообщение в объект
-      const newCoords = JSON.parse(message.toString());
-      const distance = calculateDistance(initialCoords.lat, initialCoords.lon, newCoords.lat, newCoords.lon);
+        map.addChild(new YMapDefaultSchemeLayer(customization ? { customization } : {}));
+        map.addChild(new YMapDefaultFeaturesLayer());
 
-      // Обновляем текст в HTML
-      const distanceElement = document.querySelector('.framer-xcu0ic .framer-text');
-      distanceElement.textContent = `${distance.toFixed(2)} км`;
+        const markers = [
+            {
+                coordinates: [60.759863, 56.769637],
+                title: 'Поезд',
+                subtitle: '56.769637, 60.759863',
+                color: 'red',
+                iconName: 'fallback'
+            },
+            {
+                coordinates: [60.757402, 56.770130],
+                title: 'Бригада',
+                subtitle: '56.770130, 60.757402',
+                color: 'green',
+                iconName: 'fallback'
+            }
+        ];
+
+        markers.forEach(markerData => {
+            const marker = new YMapDefaultMarker({
+                coordinates: markerData.coordinates,
+                title: markerData.title,
+                subtitle: markerData.subtitle,
+                color: markerData.color,
+                size: 'normal',
+                iconName: markerData.iconName
+            });
+            map.addChild(marker);
+        });
+
+        // Линия между точками
+        const line = new YMapFeature({
+            geometry: { type: 'LineString', coordinates: markers.map(m => m.coordinates) },
+            style: {
+                strokeColor: '#007BFF',
+                strokeWidth: 4,
+                strokeOpacity: 0.8
+            }
+        });
+
+        map.addChild(line);
     }
-  });
 </script>
                     <div class="framer-7ul4hf" data-framer-name="Group 25">
                         <div class="framer-o2vvgo" data-framer-name="Rectangle 50"></div>
@@ -10398,7 +10423,7 @@ map.addChild(layer);
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                             data-framer-component-type="RichTextContainer">
                             <p style="--font-selector:R0Y7QXNhcC02MDA=;--framer-font-family:&quot;Asap&quot;, &quot;Asap Placeholder&quot;, sans-serif;--framer-font-weight:600;--framer-letter-spacing:0.08em"
-                                class="framer-text">12 км</p>
+                                class="framer-text">190 м</p>
                         </div>
                     </div>
                     <div class="framer-ydt64c" data-framer-name="Group 36">
@@ -10407,7 +10432,7 @@ map.addChild(layer);
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                             data-framer-component-type="RichTextContainer">
                             <p style="--font-selector:R0Y7QXNhcC02MDA=;--framer-font-family:&quot;Asap&quot;, &quot;Asap Placeholder&quot;, sans-serif;--framer-font-weight:600;--framer-letter-spacing:0.08em"
-                                class="framer-text">2м</p>
+                                class="framer-text">1м</p>
                         </div>
                     </div>
                     <div class="framer-1ceryib" data-framer-name="Group 30">
@@ -10521,15 +10546,15 @@ map.addChild(layer);
                         <div class="framer-1r1olp" data-framer-name="5 км"
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                             data-framer-component-type="RichTextContainer">
-                            <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:&quot;Anta&quot;, &quot;Anta Placeholder&quot;, sans-serif;--framer-font-size:64px;--framer-letter-spacing:-0.06em"
-                                class="framer-text">5 км</p>
+                            <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:&quot;Anta&quot;, &quot;Anta Placeholder&quot;, sans-serif;--framer-font-size:60px;--framer-letter-spacing:-0.06em"
+                                class="framer-text">190 м</p>
                         </div>
                         <div class="framer-izgnpg" data-border="true" data-framer-name="Rectangle 38"></div>
                         <div class="framer-1ahmp39" data-framer-name="Далеко"
                             style="outline:none;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;transform:none"
                             data-framer-component-type="RichTextContainer">
-                            <p style="--font-selector:R0Y7Q29tZm9ydGFhLTcwMA==;--framer-font-family:&quot;Comfortaa&quot;, sans-serif;--framer-font-size:24px;--framer-font-weight:700;--framer-letter-spacing:0.09em;--framer-line-height:0%;--framer-text-alignment:center;--framer-text-color:rgb(148, 51, 52)"
-                                class="framer-text">Далеко</p>
+                            <p style="--font-selector:R0Y7Q29tZm9ydGFhLTcwMA==;--framer-font-family:&quot;Comfortaa&quot;, sans-serif;--framer-font-size:24px;--framer-font-weight:700;--framer-letter-spacing:0.09em;--framer-line-height:0%;--framer-text-alignment:center;--framer-text-color:rgb(156, 214, 98)"
+                                class="framer-text">Близко</p>
                         </div>
                         <div class="framer-1tawid6" data-framer-name="Расстояние"
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
@@ -10571,8 +10596,8 @@ map.addChild(layer);
                                 const minutes = ekaterinburgTime.getMinutes().toString().padStart(2, '0');
                                 document.getElementById('current-time').textContent = `${hours}:${minutes}`;
 
-                                // Второе время +2 минуты
-                                const ekaterinburgTimePlus2 = new Date(ekaterinburgTime.getTime() + 120000);
+                                // Второе время +1 минуты
+                                const ekaterinburgTimePlus2 = new Date(ekaterinburgTime.getTime() + 60000);
                                 const hoursPlus2 = ekaterinburgTimePlus2.getHours().toString().padStart(2, '0');
                                 const minutesPlus2 = ekaterinburgTimePlus2.getMinutes().toString().padStart(2, '0');
                                 document.getElementById('current-time-plus2').textContent = `${hoursPlus2}:${minutesPlus2}`;
