@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Ufa-Dynamics</title>
     <script src="https://api-maps.yandex.ru/v3/?apikey=ef711d81-f625-4b3c-9d56-bfac2d9dd499&lang=ru_RU"></script>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js"></script>
     <style data-framer-css-ssr-minified="" data-framer-components="framer-lib-cursors-host framer-YV5gm">
         html,
         body,
@@ -3426,19 +3427,15 @@
                         </div>
                     </div>
                     <script>
-                        initMap();
+                    async function initMap() {
+            await ymaps3.ready;
 
-                        async function initMap() {
-                            // Промис `ymaps3.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
-                            await ymaps3.ready;
+            ymaps3.import.registerCdn('https://cdn.jsdelivr.net/npm/{package}', '@yandex/ymaps3-default-ui-theme@0.0');
 
-                            ymaps3.import.registerCdn('https://cdn.jsdelivr.net/npm/{package}', '@yandex/ymaps3-default-ui-theme@0.0');
+            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
+            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
 
-                            const {YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature} = ymaps3;
-                            const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
-
-                            // Иницилиазируем карту
-                            let customization = null;
+            let customization = null;
             try {
                 const response = await fetch('customization.json');
                 if (response.ok) {
@@ -3452,24 +3449,24 @@
             const map = new YMap(document.getElementById('map'), {
                 location: { center: [54.75, 54.75], zoom: 5 }
             });
-    // Добавляем слой для отображения схематической карты
-    map.addChild(new YMapDefaultSchemeLayer(customization ? { customization } : {}));
+
+            map.addChild(new YMapDefaultSchemeLayer(customization ? { customization } : {}));
             map.addChild(new YMapDefaultFeaturesLayer());
 
             const markers = [
                 {
-                    coordinates: [32.045098, 54.782630],
-                    title: 'Смоленск',
-                    subtitle: '54.782630, 32.045098',
+                    coordinates: [60.757402, 56.770130],
+                    title: 'Поезд',
+                    subtitle: '56.770130, 60.757402',
                     color: 'red',
-                    iconName: 'fallback'
+                    iconName: 'flag'
                 },
                 {
-                    coordinates: [55.958722, 54.735152],
-                    title: 'Уфа',
-                    subtitle: '54.735152, 55.958722',
+                    coordinates: [60.759863, 56.769637],
+                    title: 'Бригада',
+                    subtitle: '56.769637, 60.759863',
                     color: 'green',
-                    iconName: 'fallback'
+                    iconName: 'work'
                 }
             ];
 
@@ -3497,32 +3494,24 @@
 
             map.addChild(line);
 
-// Функция для получения текущего местоположения
-                            function getLocation() {
-                                if (navigator.geolocation) {
-                                    navigator.geolocation.getCurrentPosition(
-                                        (position) => {
-                                            const { latitude, longitude } = position.coords;
-                                            // Обновляем центр карты на текущее местоположение
-                                            map.setLocation({
-                                                center: [longitude, latitude],
-                                                zoom: 14 // Увеличиваем масштаб для более детального отображения
-                                            });
-                                        },
-                                        (error) => {
-                                            console.error("Ошибка при получении местоположения: ", error);
-                                        }
-                                    );
-                                } else {
-                                    console.error("Geolocation не поддерживается вашим браузером");
-                                }
-                            }
+            const R = 6371;
+            function toRad(deg) { return deg * Math.PI / 180; }
 
-                            // Вызываем функцию для получения текущего местоположения
-                            getLocation();
-}
+            const [lon1, lat1] = markers[0].coordinates;
+            const [lon2, lat2] = markers[1].coordinates;
 
-                    </script>
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                      const distance = (R * c).toFixed(2);
+
+                      document.getElementById('distance').innerText = `Расстояние между точками: ${distance} км`;
+                  }
+                  </script>
+
                     <div class="framer-m9szm8" data-framer-name="image 3">
                         <div style="position:absolute;border-radius:inherit;top:0;right:0;bottom:0;left:0"
                             data-framer-background-image-wrapper="true">
@@ -3530,75 +3519,6 @@
                         </div>
                     </div>
                     <script src="https://cdn.jsdelivr.net/npm/mqtt/dist/mqtt.min.js"></script>
-<script>
-    async function initMap() {
-        await ymaps3.ready;
-
-        ymaps3.import.registerCdn('https://cdn.jsdelivr.net/npm/{package}', '@yandex/ymaps3-default-ui-theme@0.0');
-
-        const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
-        const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
-
-        let customization = null;
-        try {
-            const response = await fetch('customization.json');
-            if (response.ok) {
-                customization = await response.json();
-            } else {
-                console.warn('Не удалось загрузить customization.json');
-            }
-        } catch (error) {
-            console.error('Ошибка загрузки customization.json:', error);
-        }
-        const map = new YMap(document.getElementById('map'), {
-            location: { center: [54.75, 54.75], zoom: 5 }
-        });
-
-        map.addChild(new YMapDefaultSchemeLayer(customization ? { customization } : {}));
-        map.addChild(new YMapDefaultFeaturesLayer());
-
-        const markers = [
-            {
-                    coordinates: [60.757402, 56.770130],
-                    title: 'Поезд',
-                    subtitle: '56.770130, 60.757402',
-                    color: 'red',
-                    iconName: 'flag'
-                },
-                {
-                    coordinates: [60.759863, 56.769637],
-                    title: 'Бригада',
-                    subtitle: '56.769637, 60.759863',
-                    color: 'green',
-                    iconName: 'work'
-                }
-        ];
-
-        markers.forEach(markerData => {
-            const marker = new YMapDefaultMarker({
-                coordinates: markerData.coordinates,
-                title: markerData.title,
-                subtitle: markerData.subtitle,
-                color: markerData.color,
-                size: 'normal',
-                iconName: markerData.iconName
-            });
-            map.addChild(marker);
-        });
-
-        // Линия между точками
-        const line = new YMapFeature({
-            geometry: { type: 'LineString', coordinates: markers.map(m => m.coordinates) },
-            style: {
-                strokeColor: '#007BFF',
-                strokeWidth: 4,
-                strokeOpacity: 0.8
-            }
-        });
-
-        map.addChild(line);
-    }
-</script>
                     <div class="framer-7ul4hf" data-framer-name="Group 25">
                         <div class="framer-o2vvgo" data-framer-name="Rectangle 50"></div>
                         <div class="framer-xcu0ic" data-framer-name="12 км"
