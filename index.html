@@ -1715,7 +1715,7 @@
 
         .framer-YV5gm .framer-2j5y1x {
             --border-bottom-width: 1px;
-            --border-color: #943334;
+            --border-color: #9cd662;
             --border-left-width: 1px;
             --border-right-width: 1px;
             --border-style: solid;
@@ -1732,7 +1732,7 @@
 
         .framer-YV5gm .framer-16uhigd {
             --border-bottom-width: 1px;
-            --border-color: #943334;
+            --border-color: #9cd662;
             --border-left-width: 1px;
             --border-right-width: 1px;
             --border-style: solid;
@@ -1749,7 +1749,7 @@
 
         .framer-YV5gm .framer-1kfrofo {
             --border-bottom-width: 1px;
-            --border-color: #943334;
+            --border-color: #9cd662;
             --border-left-width: 1px;
             --border-right-width: 1px;
             --border-style: solid;
@@ -1766,7 +1766,7 @@
 
         .framer-YV5gm .framer-4s54cr {
             --border-bottom-width: 1px;
-            --border-color: #943334;
+            --border-color: #9cd662;
             --border-left-width: 1px;
             --border-right-width: 1px;
             --border-style: solid;
@@ -3267,7 +3267,29 @@
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                             data-framer-component-type="RichTextContainer">
                             <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:&quot;Anta&quot;, &quot;Anta Placeholder&quot;, sans-serif;--framer-font-size:13px;--framer-letter-spacing:-0.06em"
-                                class="framer-text"><span style="--framer-font-size:90px" class="framer-text">96%</span>
+                                class="framer-text"><span id="percentage" style="--framer-font-size:90px" class="framer-text">96%</span>
+
+                                <script>
+                                  // Функция для уменьшения значения на 1%
+                                  function decreasePercentage() {
+                                    const percentageElement = document.getElementById('percentage');
+                                    let currentValue = parseInt(percentageElement.textContent); // Получаем текущее значение
+                                    if (currentValue > 0) { // Убедимся, что значение не уходит ниже 0
+                                      currentValue -= 1; // Уменьшаем на 1%
+                                      percentageElement.textContent = currentValue + '%'; // Обновляем текст
+                                    }
+                                  }
+
+                                  // Генерация случайного интервала между 2 и 3 минутами (в миллисекундах)
+                                  function getRandomInterval() {
+                                    const min = 2 * 60 * 1000; // 2 минуты в миллисекундах
+                                    const max = 3 * 60 * 1000; // 3 минуты в миллисекундах
+                                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                                  }
+
+                                  // Устанавливаем интервал с случайным временем
+                                  setInterval(decreasePercentage, getRandomInterval());
+                                </script>
                                 <span style="--framer-font-size:16px" class="framer-text"> </span></p>
                         </div>
                         <div class="framer-6rymu1" data-framer-name="Group 9">
@@ -3334,6 +3356,7 @@
                                 <p style="--font-selector:R0Y7QWxhdGEtcmVndWxhcg==;--framer-font-family:&quot;Alata&quot;, &quot;Alata Placeholder&quot;, sans-serif;--framer-letter-spacing:0.09em;--framer-line-height:0%;--framer-text-alignment:center"
                                     class="framer-text">GPS</p>
                             </div>
+
                             <div class="framer-10lx4j5" data-framer-name="Замена батареи"
                                 style="outline:none;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
@@ -3379,49 +3402,49 @@
                             <div class="framer-ed9i00" data-framer-name="не требуется"
                                 style="outline:none;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
-                                <p style="--font-selector:R0Y7Q29tZm9ydGFhLTcwMA==;--framer-font-family:&quot;Comfortaa&quot;, sans-serif;--framer-font-size:17px;--framer-font-weight:700;--framer-line-height:120%;--framer-text-alignment:center;--framer-text-color:rgb(148, 51, 52)"
+                                <p style="--font-selector:R0Y7Q29tZm9ydGFhLTcwMA==;--framer-font-family:&quot;Comfortaa&quot;, sans-serif;--framer-font-size:17px;--framer-font-weight:700;--framer-line-height:120%;--framer-text-alignment:center;--framer-text-color:rgb(156, 214, 98)"
                                     class="framer-text">Выключен</p>
                             </div>
                             <div class="framer-10azigp" data-framer-name="не требуется"
                                 style="outline:none;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
-                                <p style="--font-selector:R0Y7Q29tZm9ydGFhLTcwMA==;--framer-font-family:&quot;Comfortaa&quot;, sans-serif;--framer-font-size:17px;--framer-font-weight:700;--framer-line-height:120%;--framer-text-alignment:center;--framer-text-color:rgb(148, 51, 52)"
+                                <p style="--font-selector:R0Y7Q29tZm9ydGFhLTcwMA==;--framer-font-family:&quot;Comfortaa&quot;, sans-serif;--framer-font-size:17px;--framer-font-weight:700;--framer-line-height:120%;--framer-text-alignment:center;--framer-text-color:rgb(156, 214, 98)"
                                     class="framer-text">Выключен</p>
                             </div>
                             <div class="framer-mlg1na" data-framer-name="не требуется"
                                 style="outline:none;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
-                                <p style="--font-selector:R0Y7Q29tZm9ydGFhLTcwMA==;--framer-font-family:&quot;Comfortaa&quot;, sans-serif;--framer-font-size:17px;--framer-font-weight:700;--framer-line-height:120%;--framer-text-alignment:center;--framer-text-color:rgb(148, 51, 52)"
+                                <p style="--font-selector:R0Y7Q29tZm9ydGFhLTcwMA==;--framer-font-family:&quot;Comfortaa&quot;, sans-serif;--framer-font-size:17px;--framer-font-weight:700;--framer-line-height:120%;--framer-text-alignment:center;--framer-text-color:rgb(156, 214, 98)"
                                     class="framer-text">Выключен</p>
                             </div>
                             <div class="framer-uuu1da" data-framer-name="не требуется"
                                 style="outline:none;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
-                                <p style="--font-selector:R0Y7Q29tZm9ydGFhLTcwMA==;--framer-font-family:&quot;Comfortaa&quot;, sans-serif;--framer-font-size:17px;--framer-font-weight:700;--framer-line-height:120%;--framer-text-alignment:center;--framer-text-color:rgb(148, 51, 52)"
+                                <p style="--font-selector:R0Y7Q29tZm9ydGFhLTcwMA==;--framer-font-family:&quot;Comfortaa&quot;, sans-serif;--framer-font-size:17px;--framer-font-weight:700;--framer-line-height:120%;--framer-text-alignment:center;--framer-text-color:rgb(156, 214, 98)"
                                     class="framer-text">Выключен</p>
                             </div>
                         </div>
                     </div>
                     <script>
                         initMap();
-                    
+
                         async function initMap() {
                             // Промис `ymaps3.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
                             await ymaps3.ready;
-                    
+
                             const {YMap, YMapDefaultSchemeLayer} = ymaps3;
-                    
+
                             // Иницилиазируем карту
                             const map = new YMap(
                                 // Передаём ссылку на HTMLElement контейнера
                                 document.getElementById('map'),
-                    
+
                                 // Передаём параметры инициализации карты
                                 {
                                     location: {
                                         // Координаты центра карты (по умолчанию)
                                         center: [37.588144, 55.733842],
-                    
+
                                         // Уровень масштабирования
                                         zoom: 10
                                     }
@@ -10312,7 +10335,7 @@ map.addChild(layer);
                                     console.error("Geolocation не поддерживается вашим браузером");
                                 }
                             }
-                    
+
                             // Вызываем функцию для получения текущего местоположения
                             getLocation();
 }
@@ -10446,7 +10469,7 @@ map.addChild(layer);
         element.textContent = newValue;
     }
 
-    setInterval(updateValue, 1200); // Обновление каждую секунду
+    setInterval(updateValue, 2000); // Обновление каждую секунду
 </script>
                             </div>
                             <div class="framer-ciqiqz" data-border="true" data-framer-name="Rectangle 51"></div>
@@ -10472,14 +10495,14 @@ map.addChild(layer);
                                     // Генерация случайного числа от min до max с двумя знаками после запятой
                                     return (Math.random() * (max - min) + min).toFixed(2);
                                 }
-                            
+
                                 function updateValue() {
                                     const element = document.getElementById('random-value1');
                                     const newValue = getRandomValue(7.00, 8.69); // Случайное значение от 7.00 до 10.69
                                     element.textContent = newValue;
                                 }
-                            
-                                setInterval(updateValue, 1000); // Обновление каждую секунду
+
+                                setInterval(updateValue, 2000); // Обновление каждую секунду
                             </script>
                             <div class="framer-99gj2y" data-border="true" data-framer-name="Rectangle 51"></div>
                         </div>
@@ -10512,7 +10535,7 @@ map.addChild(layer);
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                             data-framer-component-type="RichTextContainer">
                             <p style="--font-selector:R0Y7QXNhcC02MDA=;--framer-font-family:&quot;Asap&quot;, &quot;Asap Placeholder&quot;, sans-serif;--framer-font-weight:600;--framer-letter-spacing:0.08em;--framer-text-alignment:center"
-                                class="framer-text">Расстояние </p>
+                                class="framer-text">Расстояние</p>
                         </div>
                         <div class="framer-g3g9ct" data-framer-name="до пункта назначения"
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
@@ -10526,39 +10549,39 @@ map.addChild(layer);
                             <div class="framer-2pa7m7" data-framer-name="2:15:54"
                                 style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                                 data-framer-component-type="RichTextContainer">
-                                <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:'Anta', 'Anta Placeholder', sans-serif;--framer-font-size:30px;--framer-letter-spacing:-0.06em"
+                                <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:'Anta', 'Anta Placeholder', sans-serif;--framer-font-size:28px;--framer-letter-spacing:-0.06em"
                                     class="framer-text" id="current-time">12:15</p>
                             </div>
                         </div>
-                        
+
                         <div class="framer-cur9kx" data-framer-name="2:44:06"
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                             data-framer-component-type="RichTextContainer">
-                            <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:'Anta', 'Anta Placeholder', sans-serif;--framer-font-size:30px;--framer-letter-spacing:-0.06em"
+                            <p style="--font-selector:R0Y7QW50YS1yZWd1bGFy;--framer-font-family:'Anta', 'Anta Placeholder', sans-serif;--framer-font-size:28px;--framer-letter-spacing:-0.06em"
                                 class="framer-text" id="current-time-plus2">12:17</p>
                         </div>
-                        
+
                         <script>
                             function updateTime() {
                                 const now = new Date();
                                 const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
                                 const ekaterinburgTime = new Date(utcTime + (3600000 * 5));
-                        
+
                                 const hours = ekaterinburgTime.getHours().toString().padStart(2, '0');
                                 const minutes = ekaterinburgTime.getMinutes().toString().padStart(2, '0');
                                 document.getElementById('current-time').textContent = `${hours}:${minutes}`;
-                        
+
                                 // Второе время +2 минуты
                                 const ekaterinburgTimePlus2 = new Date(ekaterinburgTime.getTime() + 120000);
                                 const hoursPlus2 = ekaterinburgTimePlus2.getHours().toString().padStart(2, '0');
                                 const minutesPlus2 = ekaterinburgTimePlus2.getMinutes().toString().padStart(2, '0');
                                 document.getElementById('current-time-plus2').textContent = `${hoursPlus2}:${minutesPlus2}`;
-                        
+
                                 // Обновляем отправление и прибытие
                                 document.getElementById('departure-time').textContent = `отправление: ${hours}:${minutes}`;
                                 document.getElementById('arrival-time').textContent = `прибытие: ${hoursPlus2}:${minutesPlus2}`;
                             }
-                        
+
                             setInterval(updateTime, 1000);
                             updateTime();
                         </script>
@@ -10572,7 +10595,7 @@ map.addChild(layer);
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
                             data-framer-component-type="RichTextContainer">
                             <p style="--font-selector:R0Y7QXNhcC01MDA=;--framer-font-family:&quot;Asap&quot;, &quot;Asap Placeholder&quot;, sans-serif;--framer-font-size:14px;--framer-font-weight:500;--framer-letter-spacing:0.08em;--framer-text-alignment:center"
-                                class="framer-text">отправлениt</p>
+                                class="framer-text">отправление</p>
                         </div>
                         <div class="framer-1s15tk7" data-framer-name="до прибытия"
                             style="outline:none;display:flex;flex-direction:column;justify-content:flex-start;flex-shrink:0;transform:none"
