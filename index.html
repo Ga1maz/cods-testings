@@ -10377,18 +10377,16 @@ map.addChild(layer);
 
             const markers = [
                 {
-                    coordinates: [32.045098, 54.782630],
-                    title: 'Смоленск',
-                    subtitle: '54.782630, 32.045098',
-                    color: 'red',
-                    iconName: 'fallback'
+                    coordinates: [60.759863, 56.769637],
+                    title: 'Поезд',
+                    subtitle: '56.769637, 60.759863',
+                    color: 'red'
                 },
                 {
-                    coordinates: [55.958722, 54.735152],
-                    title: 'Уфа',
-                    subtitle: '54.735152, 55.958722',
-                    color: 'green',
-                    iconName: 'fallback'
+                    coordinates: [60.757402, 56.770130],
+                    title: 'Бригада',
+                    subtitle: '56.770130, 60.757402',
+                    color: 'green'
                 }
             ];
 
@@ -10399,38 +10397,10 @@ map.addChild(layer);
                     subtitle: markerData.subtitle,
                     color: markerData.color,
                     size: 'normal',
-                    iconName: markerData.iconName
+                    iconName: 'fallback'
                 });
                 map.addChild(marker);
             });
-
-            // Линия между точками
-            const line = new YMapFeature({
-                geometry: { type: 'LineString', coordinates: markers.map(m => m.coordinates) },
-                style: {
-                    strokeColor: '#007BFF',
-                    strokeWidth: 4,
-                    strokeOpacity: 0.8
-                }
-            });
-
-            map.addChild(line);
-
-            const R = 6371;
-            function toRad(deg) { return deg * Math.PI / 180; }
-
-            const [lon1, lat1] = markers[0].coordinates;
-            const [lon2, lat2] = markers[1].coordinates;
-
-            const dLat = toRad(lat2 - lat1);
-            const dLon = toRad(lon2 - lon1);
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const distance = (R * c).toFixed(2);
-
-            document.getElementById('distance').innerText = `Расстояние между точками: ${distance} км`;
         }
 </script>
                     <div class="framer-7ul4hf" data-framer-name="Group 25">
