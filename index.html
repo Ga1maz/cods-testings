@@ -3430,12 +3430,11 @@
                         async function initMap() {
                             await ymaps3.ready;
 
-                            // ??????????? ??????????? ??????????
+                            // ?????? ??????? ?????
                             const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapFeature } = ymaps3;
-                            const { PointGeometry, PolylineGeometry } = ymaps3.geometry;
                             const { YMapDefaultMarker } = await ymaps3.import('@yandex/ymaps3-default-marker');
 
-                            // ????????? ???????????? ?????
+                            // ???????? ????????????
                             let customization = null;
                             try {
                                 const response = await fetch('customization.json');
@@ -3456,19 +3455,21 @@
                             map.addChild(new YMapDefaultSchemeLayer(customization ? { customization } : {}));
                             map.addChild(new YMapDefaultFeaturesLayer());
 
-                            // ?????? ??? ????????
+                            // ??????? (?????)
                             const markers = [
                                 {
-                                    coordinates: [54.782630, 32.045098],
+                                    coordinates: [54.782630, 32.045098], // ????????
                                     title: '????????',
                                     subtitle: '54.782630, 32.045098',
-                                    color: 'red'
+                                    color: 'red',
+                                    iconName: 'place' // ????????? ????????: 'default', 'flag', 'place', 'work', 'home'
                                 },
                                 {
-                                    coordinates: [54.735152, 55.958722],
+                                    coordinates: [54.735152, 55.958722], // ???
                                     title: '???',
                                     subtitle: '54.735152, 55.958722',
-                                    color: 'green'
+                                    color: 'green',
+                                    iconName: 'work'
                                 }
                             ];
 
@@ -3479,18 +3480,21 @@
                                     title: markerData.title,
                                     subtitle: markerData.subtitle,
                                     color: markerData.color,
-                                    size: 'normal'
-                                    // iconName: 'fallback'
+                                    size: 'normal',
+                                    iconName: markerData.iconName
                                 });
                                 map.addChild(marker);
                             });
 
-                            // ????? ????? ???????
+                            // ????? ????? ??????? (Polyline)
                             const polyline = new YMapFeature({
-                                geometry: new PolylineGeometry([
-                                    markers[0].coordinates,
-                                    markers[1].coordinates
-                                ]),
+                                geometry: {
+                                    type: 'LineString',
+                                    coordinates: [
+                                        markers[0].coordinates, // ????????
+                                        markers[1].coordinates  // ???
+                                    ]
+                                },
                                 style: {
                                     stroke: 'blue',
                                     strokeWidth: 4,
@@ -3503,6 +3507,7 @@
 
                         initMap();
                     </script>
+
                     <div class="framer-m9szm8" data-framer-name="image 3">
                         <div style="position:absolute;border-radius:inherit;top:0;right:0;bottom:0;left:0"
                             data-framer-background-image-wrapper="true">
