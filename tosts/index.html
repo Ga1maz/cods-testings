@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Уведомления со звуком</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: white;
+      padding: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      font-size: 16px;
+      animation: fadeIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+      z-index: 999;
+    }
+
+    .toast .icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .toast.error   { background-color: #2d0004; }
+    .toast.warning { background-color: #332600; }
+    .toast.success { background-color: #003d1e; }
+
+    .toast.error .icon   { background-color: #ff4d4f; }
+    .toast.warning .icon { background-color: #ffc107; color: black; }
+    .toast.success .icon { background-color: #4caf50; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -10px); }
+      to   { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translate(-50%, -10px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="buttons">
+    <button onclick="showToast('error', 'Неверные данные')">Показать ошибку</button>
+    <button onclick="showToast('warning', 'Предупреждение')">Показать warning</button>
+    <button onclick="showToast('success', 'Успешно!')">Показать успех</button>
+  </div>
+
+  <!-- Звуки -->
+  <audio id="sound-error" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+  <audio id="sound-warning" src="https://audio-previews.elements.envatousercontent.com/files/393981457/preview.mp3?response-content-disposition=attachment%3B+filename%3D%22VQ99Q5U-warning.mp3%22"></audio>
+  <audio id="sound-success" src="https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3"></audio>
+
+  <script>
+    function showToast(type, message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast ' + type;
+
+      const icon = document.createElement('div');
+      icon.className = 'icon';
+      icon.textContent = type === 'error' ? '×' :
+                         type === 'warning' ? '!' :
+                         '✓';
+
+      toast.appendChild(icon);
+      toast.appendChild(document.createTextNode(message));
+      document.body.appendChild(toast);
+
+      // Звук
+      const soundId = {
+        error: 'sound-error',
+        warning: 'sound-warning',
+        success: 'sound-success'
+      }[type];
+
+      const sound = document.getElementById(soundId);
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play();
+      }
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+  </script>
+
+</body>
+</html>
